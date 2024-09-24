@@ -11,6 +11,7 @@
 - Create a box to preview everything
 - Slider to select the wide of the comment
 - Modify mockup details like: Background, Padding, Margin, roundness, shadow, etc
+  - One dark mode for all mockups  
 - Type of inputs changing depending on the social media options
 - Responsive mockup elements
 - Add badges
