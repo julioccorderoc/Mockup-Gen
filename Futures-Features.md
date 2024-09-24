@@ -1,22 +1,27 @@
-un slider para seleccionar que tan ancho o estrecho
-se quiere el comentario
+# List of features to add
 
-Que se descargue la imagen desde un espacio diferente
-al preview
+## Functional features
 
-Other apps:
-https://social-mockup.app/
-https://preview.adpiler.com/
-https://mockupbro.com/mockup/instagram-flat-post-mockup
+- Download the image from the 'backend', not from the preview view
+- Add the inputs on the mockup preview
+- Create a user journey and all the mockups that can be generated
 
-Que se puedan editar los valores desde el preview
+## UI features
 
-Arbol de decisiones de diferentes posts
+- Slider to select the wide of the comment
+- Modify mockup details like: Background, Padding, Margin, roundness, shadow, etc
+- Type of inputs changing depending on the social media options
 
-Agregar reviews (de maps, genericas de diferentes estilos)
+## New functionalities
 
-Poder elegir un background, poder elegir el ratio (relacion)
-Poder elegir la sombra, la redondes, la fuente
+- Post
+- Reviews (different styles, like from google maps, play store, etc...)
+- 
 
-Que cambien los inputs en funcion del mockup elegido
+## Similar apps/functionalities
+
+- Social Mockup - https://social-mockup.app/
+- AdPiler - https://preview.adpiler.com/
+- Mockup Bro - https://mockupbro.com/mockup/instagram-flat-post-mockup
+
 
