@@ -1,0 +1,147 @@
+/* MockUp's User Inputs */
+.input-fields {
+    width: 100%;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+input[type="text"]:not(.user-info input),
+input[type="number"]:not(.user-info input),
+textarea,
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* User inputs */
+.user-info {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Inputs wrapper */
+.input-wrapper {
+    flex: 1;
+    width: 50%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Username input */
+.username-wrapper input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Upload file button */
+.file-wrapper {
+    display: flex;
+    width: 100%;
+}
+
+.file-label {
+    /* Position */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto auto;
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 5px;
+    height: 34.4px;
+    /* Visual */
+    padding: 8px;
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.05s ease;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.file-label:hover {
+    background-color: #e0e0e0;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    outline: 2px solid #333;
+}
+
+.file-label:active {
+    background-color: #d4d4d4;
+    box-shadow: none;
+    outline: none;
+}
+
+/* Hide input file */
+.file-wrapper input[type="file"] {
+    display: none;
+}
+
+/* Content style */
+.content-input {
+    margin-bottom: 20px;
+}
+
+/* Metadata styles */
+.comment-metadata {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.comment-likes {
+    flex: 1;
+    width: calc(33.33% - 10px);
+    /* Un tercio del espacio menos la mitad del gap */
+}
+
+.comment-time {
+    flex: 2;
+    width: calc(66.67% - 10px);
+    /* Dos tercios del espacio menos la mitad del gap */
+}
+
+.time-inputs {
+    display: flex;
+    gap: 10px;
+}
+
+.time-inputs input[type="number"],
+.time-inputs select {
+    flex: 1;
+    width: calc(50% - 5px);
+    /* Cada uno ocupa el 50% del espacio de comment-time */
+}
+
+/* Comments inputs */
+.comment-details {
+    display: flex;
+    gap: 20px;
+}
+
+.dark-theme-toggle,
+.user-liked-toggle,
+.number-reply-toggle {
+    flex: 1;
+}

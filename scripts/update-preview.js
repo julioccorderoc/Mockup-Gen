@@ -1,10 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const socialButtons = document.querySelectorAll('.social-button');
-    //const form = document.getElementById('comment-form');
     const preview = document.getElementById('preview');
-    const downloadBtn = document.getElementById('download-btn');
-    const fileInput = document.getElementById('profile-pic');
-    const fileLabel = document.querySelector('.file-text');
 
     let selectedSocial = null;
 
@@ -31,19 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
         element.addEventListener('change', updatePreview);
     });
 
-    // Evento para el botón de descarga
-    downloadBtn.addEventListener('click', downloadImage);
-
-    // Evento para mostrar el nombre del archivo seleccionado
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) {
-            const fileName = e.target.files[0].name;
-            fileLabel.textContent = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
-        } else {
-            fileLabel.textContent = 'Seleccionar imagen';
-        }
-    });
-
     function updatePreview() {
         if (!selectedSocial) return;
 
@@ -54,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const duration = document.getElementById('duration').value;
         const durationUnit = document.getElementById('duration-unit').value;
 
-        let profilePicUrl = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
+        let profilePicUrl = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png';
         if (profilePic.files && profilePic.files[0]) {
             profilePicUrl = URL.createObjectURL(profilePic.files[0]);
         }
@@ -93,36 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    function downloadImage() {
-        const element = document.getElementById('capture-area');
-        if (!element) {
-            console.error('Element with id "capture-area" not found');
-            return;
-        }
-
-        const rect = element.getBoundingClientRect();
-        const options = {
-            width: rect.width,
-            height: rect.height,
-            style: {
-                transform: 'scale(1)',
-                transformOrigin: 'top left',
-                width: `${rect.width}px`,
-                height: `${rect.height}px`
-            }
-        };
-
-        htmlToImage.toPng(element, options)
-            .then(function (dataUrl) {
-                const link = document.createElement('a');
-                link.download = 'instagram-comment.png';
-                link.href = dataUrl;
-                link.click();
-            })
-            .catch(function (error) {
-                console.error('Error generating image:', error);
-            });
-    }
 });
 
 function formatUsername(username) {

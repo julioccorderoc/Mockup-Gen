@@ -1,0 +1,50 @@
+/* Responsive styles */
+@media (max-width: 768px) {
+    .content-wrapper {
+        flex-direction: column;
+    }
+
+    .input-column,
+    .preview-column {
+        width: 100%;
+    }
+
+    .preview-column {
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    .container {
+        padding: 7px;
+        /* Originalmente 10px */
+    }
+
+    .instagram-comment {
+        width: calc(100vw - 32px);
+        margin: 16px 16px;
+    }
+
+    .username,
+    .time,
+    .comment-text,
+    .comment-actions,
+    .likes-count {
+        font-size: 9px;
+        /* Originalmente 14px */
+    }
+
+    .user-info,
+    .comment-metadata {
+        flex-direction: column;
+    }
+
+    .input-wrapper,
+    .comment-likes,
+    .comment-time {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+}

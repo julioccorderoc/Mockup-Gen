@@ -1,0 +1,140 @@
+/* General Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+    padding: 24px;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #1976D2;
+    margin: auto auto;
+    margin-bottom: 25px;
+}
+
+/* Main Layout */
+.content-wrapper {
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+}
+
+.input-column {
+    /* flex: 1; */
+    width: 40%;
+    /* box-sizing: border-box; */
+    margin: auto auto;
+    padding: 25px 25px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.preview-column {
+    /* flex: 2; */
+    width: 60%;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* Social Media Selector */
+.social-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.social-selector-text {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.social-buttons {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.social-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.social-button:hover,
+.social-button.active {
+    opacity: 1;
+}
+
+.social-button img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+/* Download button */
+#download-btn {
+    margin-bottom: 25px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.action-button {
+    background-color: #1976D2;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.05s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.action-button:hover {
+    background-color: #1565C0;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    outline: 2px solid #0b3360;
+}
+
+.action-button:active {
+    background-color: #1565C0;
+    box-shadow: none;
+    outline: none;
+}
+
+/* Preview Box Styles */
+.capture-area {
+    outline: 0.5px solid rgba(0, 0, 0, 0.1);
+    background-color: red;
+}
+
+#capture-area {
+    width: fit-content;
+    padding: 0;
+    margin: 0 auto;
+    box-sizing: border-box;
+    display: inline-block;
+}
