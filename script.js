@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     //const form = document.getElementById('comment-form');
     const preview = document.getElementById('preview');
     const downloadBtn = document.getElementById('download-btn');
+    const fileInput = document.getElementById('profile-pic');
+    const fileLabel = document.querySelector('.file-text');
 
     let selectedSocial = null;
 
@@ -24,20 +26,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Eventos para los campos del formulario
-    form.addEventListener('input', updatePreview);
-    form.addEventListener('change', updatePreview);
+    document.querySelectorAll('.input-fields input, .input-fields textarea, .input-fields select').forEach(element => {
+        element.addEventListener('input', updatePreview);
+        element.addEventListener('change', updatePreview);
+    });
 
     // Evento para el botón de descarga
     downloadBtn.addEventListener('click', downloadImage);
 
     // Evento para mostrar el nombre del archivo seleccionado
-    document.getElementById('profile-pic').addEventListener('change', function (e) {
-        const fileName = e.target.files[0]?.name;
-        const fileNameElement = document.querySelector('.file-name');
-        if (fileName) {
-            fileNameElement.textContent = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            const fileName = e.target.files[0].name;
+            fileLabel.textContent = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
         } else {
-            fileNameElement.textContent = '';
+            fileLabel.textContent = 'Seleccionar imagen';
         }
     });
 
@@ -67,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Formatear el contenido del comentario
         const formattedContent = formatContent(content);
 
-        preview.innerHTML = `
+        document.getElementById('capture-area').innerHTML = `
             <div class="instagram-comment">
                 <img src="${profilePicUrl}" alt="Profile Picture" class="profile-pic">
                 <div class="comment-content">
@@ -92,8 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function downloadImage() {
         const element = document.getElementById('capture-area');
+        if (!element) {
+            console.error('Element with id "capture-area" not found');
+            return;
+        }
 
-        // Calcula el tamaño exacto del contenido
         const rect = element.getBoundingClientRect();
         const options = {
             width: rect.width,

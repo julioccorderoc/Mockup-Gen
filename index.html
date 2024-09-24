@@ -3,54 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mockup de Comentarios de Redes Sociales</title>
+    <title>Social Media Mockup</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
+    <link rel="stylesheet" href="stylesTEST.css">
+
 </head>
 <body>
     <div class="container">
-        <h1>Mockup de Comentarios de Redes Sociales</h1>
+        <h1>SOCIAL MEDIA MOCKUPS</h1>
         
         <div class="content-wrapper">
+
+            <!-- Input Column -->
             <div class="input-column">
+
+                <!-- Social Selector -->
                 <div class="social-selector">
                     <p class="social-selector-text">Selecciona una red social:</p>
                     <div class="social-buttons">
                         <button class="social-button" data-social="instagram">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/132px-Instagram_logo_2016.svg.png" alt="Instagram">
+                            <img src="https://www.svgrepo.com/show/452229/instagram-1.svg" alt="Instagram">
                         </button>
                         <button class="social-button" data-social="facebook">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/240px-Facebook_Logo_%282019%29.png" alt="Facebook">
+                            <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook">
+                        </button>
+                        <button class="social-button" data-social="tiktok">
+                            <img src="https://www.svgrepo.com/show/303260/tiktok-logo-logo.svg" alt="Tik Tok">
                         </button>
                         <button class="social-button" data-social="twitter">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/X_icon_2.svg/240px-X_icon_2.svg.png" alt="X (Twitter)">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/X_logo_2023_original.svg" alt="X (Twitter)">
                         </button>
                         <button class="social-button" data-social="youtube">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/159px-YouTube_full-color_icon_%282017%29.svg.png" alt="YouTube">
+                            <img src="https://www.svgrepo.com/show/475700/youtube-color.svg" alt="YouTube">
                         </button>
                     </div>
                 </div>
+
+                <!-- Input Fields -->
                 <div class="input-fields">
+
+                    <!-- User Info -->
                     <div class="user-info">
-                        <form id="comment-form">
-                        <div class="username-input">
+                        <div class="input-wrapper username-wrapper">
                             <label for="username">Usuario:</label>
                             <input type="text" id="username" name="username" required>
                         </div>
-                        <div class="file-input">
+                        <div class="input-wrapper file-wrapper">
+                            <label for="profile-pic">Profile pic:</label>
                             <label for="profile-pic" class="file-label">
                                 <span class="file-text">Seleccionar imagen</span>
                                 <input type="file" id="profile-pic" name="profile-pic" accept="image/*">
                             </label>
-                            <span class="file-name"></span>
                         </div>
                     </div>
-                    <div class="form-group">
+
+                    <!-- Content Input -->
+                    <div class="content-input">
                         <label for="content">Contenido:</label>
                         <textarea id="content" name="content" rows="3" required></textarea>
                     </div>
 
+                    <!-- Comment Metadata -->
                     <div class="comment-metadata">
                         <div class="comment-likes">
                             <label for="likes">Likes:</label>
@@ -67,21 +80,50 @@
                             </div>
                         </div>
                     </div>
-                </form>
-                </div>
-            </div>
 
+                    <!-- Comment details -->
+                    <div class="comment-details">
+                        <div class="dark-theme-toggle">
+                            <label for="theme-toggle">Dark Theme</label>
+                            <label class="switch">
+                                <input type="checkbox" id="theme-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="user-liked-toggle">
+                            <label for="liked-toggle">Liked</label>
+                            <label class="switch">
+                                <input type="checkbox" id="liked-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="number-reply-toggle">
+                            <label for="reply-toggle">Replied</label>
+                            <label class="switch">
+                                <input type="checkbox" id="reply-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                <!-- Finish Input Fields -->
+                </div>
+            <!-- Finish Input Column -->
+            </div>
+            
+            <!-- Preview Column -->
             <div class="preview-column">
-                <div id="capture-area">
-                    <div id="preview">
+                <button class="action-button" id="download-btn">DESCARGAR</button>
+                <div class="capture-area">
+                    <div id="capture-area">
                         <!-- El contenido del preview se generará dinámicamente con JavaScript -->
                     </div>
                 </div>
-                <button id="download-btn">Descargar como Imagen</button>
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
+    <script src="scriptTEST.js"></script>
 </body>
 </html>
