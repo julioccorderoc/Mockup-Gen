@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup de Comentarios de Redes Sociales</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Mockup de Comentarios de Redes Sociales</h1>
+        
+        <div class="content-wrapper">
+            <div class="input-column">
+                <div class="social-selector">
+                    <p class="social-selector-text">Selecciona una red social:</p>
+                    <div class="social-buttons">
+                        <button class="social-button" data-social="instagram">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/132px-Instagram_logo_2016.svg.png" alt="Instagram">
+                        </button>
+                        <button class="social-button" data-social="facebook">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/240px-Facebook_Logo_%282019%29.png" alt="Facebook">
+                        </button>
+                        <button class="social-button" data-social="twitter">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/X_icon_2.svg/240px-X_icon_2.svg.png" alt="X (Twitter)">
+                        </button>
+                        <button class="social-button" data-social="youtube">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/159px-YouTube_full-color_icon_%282017%29.svg.png" alt="YouTube">
+                        </button>
+                    </div>
+                </div>
+                <div class="input-fields">
+                    <div class="user-info">
+                        <form id="comment-form">
+                        <div class="username-input">
+                            <label for="username">Usuario:</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="file-input">
+                            <label for="profile-pic" class="file-label">
+                                <span class="file-text">Seleccionar imagen</span>
+                                <input type="file" id="profile-pic" name="profile-pic" accept="image/*">
+                            </label>
+                            <span class="file-name"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="content">Contenido:</label>
+                        <textarea id="content" name="content" rows="3" required></textarea>
+                    </div>
+
+                    <div class="comment-metadata">
+                        <div class="comment-likes">
+                            <label for="likes">Likes:</label>
+                            <input type="number" id="likes" name="likes" min="0" value="56" required>
+                        </div>
+                        <div class="comment-time">
+                            <label for="duration">Publicado hace:</label>
+                            <div class="time-inputs">
+                                <input type="number" id="duration" name="duration" min="1" value="12" required>
+                                <select id="duration-unit" name="duration-unit">
+                                    <option value="h" selected>horas</option>
+                                    <option value="d">días</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                </div>
+            </div>
+
+            <div class="preview-column">
+                <div id="capture-area">
+                    <div id="preview">
+                        <!-- El contenido del preview se generará dinámicamente con JavaScript -->
+                    </div>
+                </div>
+                <button id="download-btn">Descargar como Imagen</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
