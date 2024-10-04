@@ -1,0 +1,111 @@
+<html>
+    <head>
+        <title>Thumbnail de YouTube</title>
+        <style>
+            /* Estilos generales */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+            }
+
+            /* Contenedor principal del thumbnail */
+            .youtube-thumbnail {
+                width: 360px; /* Ajustar según sea necesario */
+                background-color: #181818;
+                border-radius: 12px;
+                padding: 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            /* Imagen de previsualización del video */
+            .thumbnail-preview {
+                width: 100%;
+                height: 200px; /* Altura ajustable */
+                background-image: url('https://via.placeholder.com/360x200'); /* Imagen genérica */
+                background-size: cover;
+                background-position: center;
+                border-radius: 8px;
+            }
+
+            /* Contenedor de la información del video */
+            .video-info {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            /* Imagen de perfil del canal */
+            .profile-pic {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-image: url('https://via.placeholder.com/40'); /* Imagen genérica */
+                background-size: cover;
+                background-position: center;
+            }
+
+            /* Detalles del video */
+            .video-details {
+                flex-grow: 1;
+            }
+
+            .video-title {
+                color: white;
+                font-size: 16px;
+                font-weight: bold;
+                margin-bottom: 6px;
+            }
+
+            .video-username {
+                color: #aaa;
+                font-size: 14px;
+                margin-bottom: 4px;
+            }
+
+            .video-stats {
+                color: #aaa;
+                font-size: 12px;
+            }
+
+            /* Botón de los 3 puntos (menú de opciones) */
+            .more-options {
+                color: #aaa;
+                font-size: 20px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="capture-area">
+            <!-- Estructura del thumbnail -->
+            <div class="youtube-thumbnail">
+                <!-- Imagen de previsualización -->
+                <div class="thumbnail-preview"></div>
+
+                <!-- Contenedor de información del video -->
+                <div class="video-info">
+                    <!-- Imagen de perfil del canal -->
+                    <div class="profile-pic"></div>
+
+                    <!-- Detalles del video -->
+                    <div class="video-details">
+                        <div class="video-title">Viva La Vida - Catholicism</div>
+                        <div class="video-username">LimitedVibes</div>
+                        <div class="video-stats">849K visualizaciones • hace 2 años</div>
+                    </div>
+
+                    <!-- Menú de opciones -->
+                    <div class="more-options">⋮</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
