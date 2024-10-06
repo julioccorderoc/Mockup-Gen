@@ -4,7 +4,7 @@ body {
     line-height: 1.6;
     color: #333;
     margin: 0;
-    padding: 24px;
+    padding: 5px;
     background-color: #f5f5f5;
 }
 
@@ -53,8 +53,18 @@ h1 {
     align-items: center;
 }
 
-/* Social Media Selector */
-.social-selector {
+/* Mockup Selector */
+
+.social-selector-text,
+.option-selector-text {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.social-selector,
+.option-selector {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -62,19 +72,15 @@ h1 {
     margin-bottom: 20px;
 }
 
-.social-selector-text {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 5px;
-}
-
-.social-buttons {
+.social-buttons,
+.option-buttons {
     display: flex;
     width: 100%;
     justify-content: space-between;
 }
 
-.social-button {
+.social-button,
+.option-button {
     background: none;
     border: none;
     cursor: pointer;
@@ -83,11 +89,14 @@ h1 {
 }
 
 .social-button:hover,
-.social-button.active {
+.social-button.active,
+.option-button:hover,
+.option-button.active {
     opacity: 1;
 }
 
-.social-button img {
+.social-button img,
+.option-button img {
     width: 40px;
     height: 40px;
     object-fit: contain;
