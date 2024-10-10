@@ -1,46 +1,46 @@
+// global var
+let selectedSocial = null;
+let selectedOption = null;
+let currentModel = {};
+
 document.addEventListener('DOMContentLoaded', () => {
     const socialButtons = document.querySelectorAll('.social-button');
     const optionButtons = document.querySelectorAll('.option-button');
-    //const model = createModel();
-    //const preview = document.getElementById('preview');
 
-    // set template selector variables
-    let selectedSocial = null;
-    let selectedOption = null;
-
-    // placeholder values
-    setPlaceholdersValues()
-
-    // Cargar inicialmente la plantilla placeholder
+    // placeholders
+    setPlaceholdersValues();
     loadPlaceholderTemplate();
+    // init model
+    currentModel = createModel();
 
-    // Eventos para los campos del formulario
-    document.querySelectorAll('.input-fields input, .input-fields textarea, .input-fields select').forEach(element => {
-        element.addEventListener('input', updatePreview);
-        element.addEventListener('change', updatePreview);
+    // live updates when changes on inputs
+    const inputFields = document.querySelector('.input-fields');
+    inputFields.addEventListener('input', (event) => {
+        if (event.target.matches('input, textarea, select')) {
+            updateModel(event.target);
+            updatePreview(event.target.id);
+        }
     });
 
-    // Evento para seleccionar la red social
+    // select social media event
     socialButtons.forEach(button => {
         button.addEventListener('click', function () {
             const social = this.getAttribute('data-social');
 
-            // Si la red social ya está seleccionada, ocultamos las opciones y reiniciamos
             if (selectedSocial === social) {
                 resetOptionSelector();
                 selectedSocial = null;
-                loadPlaceholderTemplate(); // Cargar la plantilla placeholder
+                loadPlaceholderTemplate();
             } else {
                 selectedSocial = social;
                 console.log("Red social seleccionada:", selectedSocial);
-
                 resetOptionSelector();
-                document.getElementById('option-selector').style.display = 'block'; // Mostrar el selector de opciones
+                document.getElementById('option-selector').style.display = 'block';
             }
         });
     });
 
-    // Evento para seleccionar la opción
+    // select option event
     optionButtons.forEach(button => {
         button.addEventListener('click', function () {
             selectedOption = this.getAttribute('data-option');
@@ -52,7 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Verificar que ambas selecciones estén hechas
             if (selectedSocial && selectedOption) {
-                loadTemplate(selectedSocial, selectedOption); // Cargar la plantilla
+                updateDurationInModel();
+                loadTemplate(selectedSocial, selectedOption);
             }
         });
     });
@@ -65,15 +66,15 @@ function setPlaceholdersValues() {
     document.getElementById('content').value = 'Lorem @ipsum odor amet, adipiscing #elit. Vel enim enim velit aliquam orci non posuere. Lectus consequat.';
     document.getElementById('likes').value = '56';
     document.getElementById('duration').value = '12';
-    document.getElementById.value = 'h';
+    document.getElementById.value = 'day';
 }
 
-// Función para cargar la plantilla placeholder si no hay selección
+// to load the placeholder template
 async function loadPlaceholderTemplate() {
     try {
         const response = await fetch(`../templates/placeholder.html`);
         const template = await response.text();
-        const captureArea = document.getElementById('capture-area');
+        const captureArea = document.getElementById('capture-area-front');
 
         if (captureArea) {
             captureArea.innerHTML = template;
@@ -86,12 +87,12 @@ async function loadPlaceholderTemplate() {
     }
 }
 
-// Función para cargar la plantilla de error
+// to load the no template placeholder
 async function loadErrorTemplate() {
     try {
         const response = await fetch(`../templates/load-error.html`);
         const template = await response.text();
-        const captureArea = document.getElementById('capture-area');
+        const captureArea = document.getElementById('capture-area-front');
 
         if (captureArea) {
             captureArea.innerHTML = template;
@@ -103,7 +104,7 @@ async function loadErrorTemplate() {
     }
 }
 
-// Función para restablecer el selector de opciones
+// reset the template selector
 function resetOptionSelector() {
     selectedOption = null;
     document.querySelectorAll('.option-button').forEach(button => {
@@ -114,29 +115,15 @@ function resetOptionSelector() {
 
 // model to capture data
 function createModel() {
-    const username = document.getElementById('username').value;
-    const profilePic = document.getElementById('profile-pic');
-    const content = document.getElementById('content').value;
-    const likes = document.getElementById('likes').value;
-    const duration = document.getElementById('duration').value;
-    const durationUnit = document.getElementById('duration-unit').value;
-
-    let profilePicUrl = 'static/placeholders/profile-pic.svg';
-    if (profilePic.files && profilePic.files[0]) {
-        profilePicUrl = URL.createObjectURL(profilePic.files[0]);
-    }
-
-    let formattedDuration = '';
-    if (duration) {
-        formattedDuration = durationUnit === 'h' ? `${duration}h` : `${duration}d`;
-    }
-
     return {
-        username: formatUsername(username),
-        profilePicUrl: profilePicUrl,
-        formattedContent: formatContent(content),
-        likes: likes,
-        formattedDuration: formattedDuration
+        username: document.getElementById('username').value,
+        profilePicUrl: document.getElementById('profile-pic').files[0]
+            ? URL.createObjectURL(document.getElementById('profile-pic').files[0])
+            : 'static/placeholders/profile-pic.svg',
+        content: document.getElementById('content').value,
+        likes: document.getElementById('likes').value,
+        duration: document.getElementById('duration').value,
+        duration_unit: document.getElementById('duration_unit').value
     };
 }
 
@@ -167,68 +154,89 @@ async function loadTemplate(social, option) {
     try {
         const response = await fetch(templatePath);
         if (!response.ok) {
-            console.warn(`Plantilla no encontrada en ${templatePath}. Cargando la plantilla de error.`);
             throw new Error('Plantilla no encontrada');
         }
-        const template = await response.text();
-        const model = createModel();
-        const renderedTemplate = insertValuesIntoTemplate(template, model);
-        document.getElementById('capture-area').innerHTML = renderedTemplate;
+
+        let template = await response.text();
+        document.getElementById('capture-area-front').innerHTML = template;
+
+        // Actualizar todos los campos después de cargar la plantilla
+        Object.keys(currentModel).forEach(key => {
+            updatePreview(key);
+        });
+
     } catch (error) {
         console.error('Error al cargar la plantilla:', error);
         loadErrorTemplate();
     }
 }
 
-// Función para actualizar un input específico en la plantilla
-function updateInputOnTemplate(template, key, value) {
-    try {
-        const regex = new RegExp(`\\[${key}\\]`, 'g');
-        if (template.match(regex)) {
-            return template.replace(regex, value);
-        } else {
-            console.log(`La plantilla no tiene campo para: ${key}`);
-            return template;
-        }
-    } catch (error) {
-        console.error(`Error actualizando ${key} en la plantilla:`, error);
-        return template;
+// Función para actualizar los valores de duración en la plantilla
+function updateTemplateDurationValues(container) {
+    // Buscamos los elementos de duración y unidad en la plantilla
+    const durationElement = container.querySelector('[data-field="duration"]');
+    const unitElement = container.querySelector('[data-field="duration_unit"]');
+
+    // Actualizamos los elementos si existen
+    if (durationElement) {
+        durationElement.textContent = currentModel.duration;
+    }
+    if (unitElement) {
+        unitElement.textContent = currentModel.duration_unit;
     }
 }
 
-// Update preview function
-function updatePreview(event) {
+function updateTemplateValue(key, container) {
+    try {
+        const element = container.querySelector(`[data-field="${key}"]`);
+        if (!element) {
+            console.warn(`No se encontró elemento para el campo: ${key}`);
+            return;
+        }
+
+        let value = currentModel[key];
+
+        switch (key) {
+            case 'username':
+                value = formatUsername(value);
+                break;
+            case 'content':
+                element.innerHTML = formatContent(value);
+                return;
+            case 'duration':
+            case 'duration_unit':
+                updateTemplateDurationValues(container);
+                return;
+            case 'profilePicUrl':
+                if (element.tagName === 'IMG') {
+                    element.src = value;
+                    return;
+                }
+                break;
+        }
+
+        element.textContent = value;
+
+    } catch (error) {
+        console.error(`Error al actualizar el valor para ${key}:`, error);
+    }
+}
+
+// update preview
+function updatePreview(key) {
     if (!selectedSocial || !selectedOption) {
-        console.log('No se ha seleccionado una red social o una opción');
+        console.log('Selecciona una opción para actualizar');
         return;
     }
 
     try {
-        const captureArea = document.getElementById('capture-area');
+        const captureArea = document.getElementById('capture-area-front');
         if (!captureArea) {
-            throw new Error('El contenedor de captura no existe');
+            throw new Error('Contenedor de la plantilla no disponible');
         }
 
-        const changedInput = event.target;
-        const inputKey = changedInput.id;
-        let inputValue = changedInput.value;
+        updateTemplateValue(key, captureArea);
 
-        if (inputKey === 'username') {
-            inputValue = formatUsername(inputValue);
-        } else if (inputKey === 'content') {
-            inputValue = formatContent(inputValue);
-        } else if (inputKey === 'duration' || inputKey === 'duration-unit') {
-            const duration = document.getElementById('duration').value;
-            const durationUnit = document.getElementById('duration-unit').value;
-            inputValue = durationUnit === 'h' ? `${duration}h` : `${duration}d`;
-            inputKey = 'formattedDuration';
-        }
-
-        let updatedTemplate = captureArea.innerHTML;
-        updatedTemplate = updateInputOnTemplate(updatedTemplate, inputKey, inputValue);
-        captureArea.innerHTML = updatedTemplate;
-
-        console.log('Vista previa actualizada con éxito');
     } catch (error) {
         console.error('Error al actualizar la vista previa:', error);
     }
@@ -242,4 +250,60 @@ function formatUsername(username) {
 function formatContent(content) {
     return content.replace(/@(\w+)/g, '<span class="mention">@$1</span>')
         .replace(/#(\w+)/g, '<span class="hashtag">#$1</span>');
+}
+
+function transformDuration(duration, unit) {
+    const units = {
+        'sec': { next: 'min', factor: 60 },
+        'min': { next: 'hour', factor: 60 },
+        'hour': { next: 'day', factor: 24 },
+        'day': { next: 'week', factor: 7 },
+        'week': { next: null, factor: null }
+    };
+
+    duration = parseInt(duration, 10);
+
+    // Si la duración no es un número válido o la unidad es inválida, devolvemos valores por defecto
+    if (isNaN(duration) || !units[unit]) {
+        return { duration: 0, unit: 'sec' };
+    }
+
+    // Si la duración es mayor que el factor de conversión y no estamos en la unidad máxima
+    if (units[unit].factor && duration >= units[unit].factor) {
+        const newDuration = Math.floor(duration / units[unit].factor);
+        const newUnit = units[unit].next;
+
+        // Llamada recursiva para continuar la conversión si es necesario
+        return transformDuration(newDuration, newUnit);
+    }
+
+    // Si no se necesita conversión, devolvemos los valores actuales
+    return { duration, unit: unit[0] };
+}
+
+// because the duration and its unit have to be together
+function updateDurationInModel() {
+    // Obtenemos los valores actuales de los inputs
+    const duration = document.getElementById('duration').value;
+    const unit = document.getElementById('duration_unit').value;
+
+    // Transformamos la duración
+    const transformed = transformDuration(duration, unit);
+
+    // Actualizamos el modelo con los valores transformados
+    currentModel.duration = transformed.duration;
+    currentModel.duration_unit = transformed.unit;
+}
+
+// primary function
+function updateModel(inputElement) {
+    try {
+        if (inputElement.id === 'duration' || inputElement.id === 'duration_unit') {
+            updateDurationInModel();
+        } else {
+            currentModel[inputElement.id] = inputElement.value;
+        }
+    } catch (error) {
+        console.error(`Error al actualizar el modelo: ${error.message}`);
+    }
 }
