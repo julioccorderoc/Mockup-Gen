@@ -135,12 +135,12 @@ h1 {
 }
 
 /* Preview Box Styles */
-.capture-area {
+.capture-area-front {
     outline: 0.5px solid rgba(0, 0, 0, 0.1);
-    background-color: red;
+    background-color: white;
 }
 
-#capture-area {
+#capture-area-front {
     width: fit-content;
     padding: 0;
     margin: 0 auto;
