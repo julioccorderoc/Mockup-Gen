@@ -7,54 +7,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const socialButtons = document.querySelectorAll('.social-button');
     const optionButtons = document.querySelectorAll('.option-button');
 
-    // init the model
+    // init model
     setPlaceholdersValues();
     loadPlaceholderTemplate();
     currentModel = createModel();
 
-    // live updates on inputs
-    initializeEventListeners();
-
-    // select social media event
-    socialButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const social = this.getAttribute('data-social');
-
-            if (selectedSocial === social) {
-                resetOptionSelector();
-                selectedSocial = null;
-                loadPlaceholderTemplate();
-            } else {
-                selectedSocial = social;
-                console.log("Red social seleccionada:", selectedSocial);
-                resetOptionSelector();
-                document.getElementById('option-selector').style.display = 'block';
-            }
-        });
-    });
-
-    // select option event
-    optionButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            selectedOption = this.getAttribute('data-option');
-            console.log("Opción seleccionada:", selectedOption);
-
-            // Remover la clase seleccionada de otros botones
-            optionButtons.forEach(btn => btn.classList.remove('selected'));
-            this.classList.add('selected');
-
-            // Verificar que ambas selecciones estén hechas
-            if (selectedSocial && selectedOption) {
-                updateDurationInModel();
-                loadTemplate(selectedSocial, selectedOption);
-            }
-        });
-    });
+    // init events
+    inititalizeUpdates();
+    initializeSocialMediaEvents();
+    initializeOptionButtonEvents();
 
 });
 
-
-function initializeEventListeners() {
+// live updates
+function inititalizeUpdates() {
     const inputFields = document.querySelector('.input-fields');
     const profilePicInput = document.getElementById('profile_pic');
     const fileLabel = document.querySelector('.file-label .file-text'); // Asegúrate de que esta clase sea correcta para el file label
@@ -75,6 +41,7 @@ function initializeEventListeners() {
     });
 }
 
+// show name of the file on the upload file button
 function showSelectedPic(fileInput, fileLabel) {
     if (fileInput.files.length > 0) {
         const fileName = fileInput.files[0].name;
@@ -82,6 +49,59 @@ function showSelectedPic(fileInput, fileLabel) {
     } else {
         fileLabel.textContent = 'Seleccionar imagen';
     }
+}
+
+// handles social media buttons
+function initializeSocialMediaEvents() {
+    const socialButtons = document.querySelectorAll('.social-button');
+
+    socialButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const social = this.getAttribute('data-social');
+
+            if (selectedSocial === social) {
+                resetOptionSelector();
+                selectedSocial = null;
+                loadPlaceholderTemplate();
+            } else {
+                selectedSocial = social;
+                console.log("Red social seleccionada:", selectedSocial);
+                resetOptionSelector();
+                document.getElementById('option-selector').style.display = 'block';
+            }
+        });
+    });
+}
+
+// handles template options button
+function initializeOptionButtonEvents() {
+    const optionButtons = document.querySelectorAll('.option-button');
+
+    optionButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            selectedOption = this.getAttribute('data-option');
+            console.log("Opción seleccionada:", selectedOption);
+
+            // Remover la clase seleccionada de otros botones
+            optionButtons.forEach(btn => btn.classList.remove('selected'));
+            this.classList.add('selected');
+
+            // Verificar que ambas selecciones estén hechas
+            if (selectedSocial && selectedOption) {
+                updateDurationInModel();
+                loadTemplate(selectedSocial, selectedOption);
+            }
+        });
+    });
+}
+
+// reset the template selector
+function resetOptionSelector() {
+    selectedOption = null;
+    document.querySelectorAll('.option-button').forEach(button => {
+        button.classList.remove('selected'); // Remueve cualquier selección previa
+    });
+    document.getElementById('option-selector').style.display = 'none'; // Ocultar las opciones
 }
 
 // set placeholder values
@@ -93,7 +113,7 @@ function setPlaceholdersValues() {
     document.getElementById.value = 'day';
 }
 
-// to load the placeholder template
+// load placeholder template
 async function loadPlaceholderTemplate() {
     try {
         const response = await fetch(`../templates/placeholder.html`);
@@ -111,7 +131,7 @@ async function loadPlaceholderTemplate() {
     }
 }
 
-// to load the no template placeholder
+// load error template placeholder
 async function loadErrorTemplate() {
     try {
         const response = await fetch(`../templates/load-error.html`);
@@ -126,15 +146,6 @@ async function loadErrorTemplate() {
     } catch (error) {
         console.error('Error al cargar la plantilla de error:', error);
     }
-}
-
-// reset the template selector
-function resetOptionSelector() {
-    selectedOption = null;
-    document.querySelectorAll('.option-button').forEach(button => {
-        button.classList.remove('selected'); // Remueve cualquier selección previa
-    });
-    document.getElementById('option-selector').style.display = 'none'; // Ocultar las opciones
 }
 
 // model to capture data
