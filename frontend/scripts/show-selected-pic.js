@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const fileInput = document.getElementById('profile-pic');
+    const fileInput = document.getElementById('profile_pic');
     const fileLabel = document.querySelector('.file-text');
 
     // Evento para mostrar el nombre del archivo seleccionado

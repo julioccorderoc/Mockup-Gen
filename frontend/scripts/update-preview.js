@@ -7,20 +7,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const socialButtons = document.querySelectorAll('.social-button');
     const optionButtons = document.querySelectorAll('.option-button');
 
-    // placeholders
+    // init the model
     setPlaceholdersValues();
     loadPlaceholderTemplate();
-    // init model
     currentModel = createModel();
 
     // live updates when changes on inputs
     const inputFields = document.querySelector('.input-fields');
     inputFields.addEventListener('input', (event) => {
-        if (event.target.matches('input, textarea, select')) {
+        if (event.target.matches('input[type="text"], input[type="file"], textarea, select, input[type="number"], input[type="checkbox"]')) {
             updateModel(event.target);
             updatePreview(event.target.id);
         }
     });
+
+    //const profilePicInput = document.getElementById('profile_pic');
+    //profilePicInput.addEventListener('change', (event) => {
+    //    updateModel(event.target);
+    //});
+
 
     // select social media event
     socialButtons.forEach(button => {
@@ -114,12 +119,11 @@ function resetOptionSelector() {
 }
 
 // model to capture data
+// add type of value property to improve the updates
 function createModel() {
     return {
         username: document.getElementById('username').value,
-        profilePicUrl: document.getElementById('profile-pic').files[0]
-            ? URL.createObjectURL(document.getElementById('profile-pic').files[0])
-            : 'static/placeholders/profile-pic.svg',
+        profile_pic: 'static/placeholders/profile_pic.svg',
         content: document.getElementById('content').value,
         likes: document.getElementById('likes').value,
         duration: document.getElementById('duration').value,
@@ -186,7 +190,19 @@ function updateTemplateDurationValues(container) {
     }
 }
 
-function updateTemplateValue(key, container) {
+function updateTemplateImages(element, value, placeholder = 'static/placeholders/profile_pic.svg') {
+    if (element.tagName === 'IMG') {
+        if (value instanceof File) {
+            // Crear una URL temporal para la imagen y asignarla al src
+            element.src = URL.createObjectURL(value);
+        } else {
+            // Asignar la imagen existente o el placeholder por defecto
+            element.src = value || placeholder;
+        }
+    }
+}
+
+function updateTemplate(key, container) {
     try {
         const element = container.querySelector(`[data-field="${key}"]`);
         if (!element) {
@@ -207,11 +223,8 @@ function updateTemplateValue(key, container) {
             case 'duration_unit':
                 updateTemplateDurationValues(container);
                 return;
-            case 'profilePicUrl':
-                if (element.tagName === 'IMG') {
-                    element.src = value;
-                    return;
-                }
+            case 'profile_pic':
+                updateTemplateImages(element, value);
                 break;
         }
 
@@ -235,7 +248,7 @@ function updatePreview(key) {
             throw new Error('Contenedor de la plantilla no disponible');
         }
 
-        updateTemplateValue(key, captureArea);
+        updateTemplate(key, captureArea);
 
     } catch (error) {
         console.error('Error al actualizar la vista previa:', error);
@@ -281,7 +294,7 @@ function transformDuration(duration, unit) {
     return { duration, unit: unit[0] };
 }
 
-// because the duration and its unit have to be together
+// special model updates
 function updateDurationInModel() {
     // Obtenemos los valores actuales de los inputs
     const duration = document.getElementById('duration').value;
@@ -295,13 +308,37 @@ function updateDurationInModel() {
     currentModel.duration_unit = transformed.unit;
 }
 
+function updatePicOnModel(imageField) {
+    try {
+        const fileInput = document.getElementById(imageField);
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+            const file = fileInput.files[0];
+            // Verificar si el archivo es una imagen
+            if (!file.type.startsWith('image/')) {
+                throw new Error('El archivo seleccionado no es una imagen.');
+            }
+            // Actualizar el modelo con el archivo
+            currentModel[imageField] = file;
+            console.log(`Imagen ${imageField} actualizada en el modelo.`);
+        } else {
+            console.warn(`No se seleccionó ninguna imagen para ${imageField}.`);
+        }
+    } catch (error) {
+        console.error(`Error al actualizar la imagen ${imageField}:`, error);
+        // Establecer una imagen por defecto en caso de error
+        currentModel[imageField] = null;
+    }
+}
+
 // primary function
 function updateModel(inputElement) {
     try {
         if (inputElement.id === 'duration' || inputElement.id === 'duration_unit') {
             updateDurationInModel();
+        } else if (inputElement.id === 'profile_pic') {
+            updatePicOnModel('profile_pic');
         } else {
-            currentModel[inputElement.id] = inputElement.value;
+            currentModel[inputElement.id] = inputElement.value; // need to update the modified values, and simplify updateTemplate
         }
     } catch (error) {
         console.error(`Error al actualizar el modelo: ${error.message}`);
