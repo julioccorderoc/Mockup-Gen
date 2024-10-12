@@ -12,20 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     loadPlaceholderTemplate();
     currentModel = createModel();
 
-    // live updates when changes on inputs
-    const inputFields = document.querySelector('.input-fields');
-    inputFields.addEventListener('input', (event) => {
-        if (event.target.matches('input[type="text"], input[type="file"], textarea, select, input[type="number"], input[type="checkbox"]')) {
-            updateModel(event.target);
-            updatePreview(event.target.id);
-        }
-    });
-
-    //const profilePicInput = document.getElementById('profile_pic');
-    //profilePicInput.addEventListener('change', (event) => {
-    //    updateModel(event.target);
-    //});
-
+    // live updates on inputs
+    initializeEventListeners();
 
     // select social media event
     socialButtons.forEach(button => {
@@ -64,6 +52,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
+
+function initializeEventListeners() {
+    const inputFields = document.querySelector('.input-fields');
+    const profilePicInput = document.getElementById('profile_pic');
+    const fileLabel = document.querySelector('.file-label .file-text'); // Asegúrate de que esta clase sea correcta para el file label
+
+    inputFields.addEventListener('input', (event) => {
+        const target = event.target;
+
+        if (target.matches('input, textarea, select, [type="file"]')) {
+            updateModel(target);
+            updatePreview(target.id);
+
+            if (target.id === 'profile_pic') {
+                const fileLabel = document.querySelector('.file-text');
+                showSelectedPic(target, fileLabel);
+            }
+
+        }
+    });
+}
+
+function showSelectedPic(fileInput, fileLabel) {
+    if (fileInput.files.length > 0) {
+        const fileName = fileInput.files[0].name;
+        fileLabel.textContent = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
+    } else {
+        fileLabel.textContent = 'Seleccionar imagen';
+    }
+}
 
 // set placeholder values
 function setPlaceholdersValues() {
