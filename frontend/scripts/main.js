@@ -8,9 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const optionButtons = document.querySelectorAll('.option-button');
 
     // init model
+    currentModel = createModel();
     setPlaceholdersValues();
     loadPlaceholderTemplate();
-    currentModel = createModel();
 
     // init events
     inititalizeUpdates();
@@ -85,7 +85,6 @@ function initializeOptionButtonEvents() {
 
             // Verificar que ambas selecciones estén hechas
             if (selectedSocial && selectedOption) {
-                updateDurationInModel();
                 loadTemplate(selectedSocial, selectedOption);
             }
         });
@@ -103,11 +102,23 @@ function resetOptionSelector() {
 
 // set placeholder values
 function setPlaceholdersValues() {
-    document.getElementById('username').value = 'username';
-    document.getElementById('content').value = 'Lorem @ipsum odor amet, adipiscing #elit. Vel enim enim velit aliquam orci non posuere. Lectus consequat.';
-    document.getElementById('likes').value = '56';
-    document.getElementById('duration').value = '12';
-    document.getElementById.value = 'day';
+    const placeholders = {
+        username: 'username',
+        content: 'Lorem @ipsum odor amet, adipiscing #elit. Vel enim enim velit aliquam orci non posuere. Lectus consequat.',
+        likes: '56',
+        duration: '12',
+        duration_unit: 'hour'
+    };
+
+    for (const field in placeholders) {
+        const element = document.getElementById(field);
+        if (element) {
+            element.value = placeholders[field];
+            updateModel(element);
+        } else {
+            console.warn(`Element with id "${field}" not found. Skipping placeholder assignment.`);
+        }
+    }
 }
 
 // load placeholder template
@@ -146,15 +157,14 @@ async function loadErrorTemplate() {
 }
 
 // model to capture data
-// add type of value property to improve the updates
 function createModel() {
     return {
-        username: document.getElementById('username').value,
-        profile_pic: 'static/placeholders/profile_pic.svg',
-        content: document.getElementById('content').value,
-        likes: document.getElementById('likes').value,
-        duration: document.getElementById('duration').value,
-        duration_unit: document.getElementById('duration_unit').value
+        username: { value: null, type: 'string', format: 'username' },
+        profile_pic: { value: 'static/placeholders/profile_pic.svg', type: 'image' },
+        content: { value: null, type: 'string', format: 'content' },
+        likes: { value: null, type: 'number' },
+        duration: { value: null, type: 'duration' },
+        duration_unit: { value: null, type: 'duration' }
     };
 }
 
@@ -193,6 +203,7 @@ async function loadTemplate(social, option) {
 
         // Actualizar todos los campos después de cargar la plantilla
         Object.keys(currentModel).forEach(key => {
+            //updateModel(key);
             updatePreview(key);
         });
 
@@ -210,10 +221,10 @@ function updateTemplateDurationValues(container) {
 
     // Actualizamos los elementos si existen
     if (durationElement) {
-        durationElement.textContent = currentModel.duration;
+        durationElement.textContent = currentModel.duration.value;
     }
     if (unitElement) {
-        unitElement.textContent = currentModel.duration_unit;
+        unitElement.textContent = currentModel.duration_unit.value;
     }
 }
 
@@ -237,25 +248,25 @@ function updateTemplate(key, container) {
             return;
         }
 
-        let value = currentModel[key];
-
-        switch (key) {
-            case 'username':
-                value = formatString(key, value);
-                break;
-            case 'content':
-                element.innerHTML = formatString(key, value);
-                return;
-            case 'duration':
-            case 'duration_unit':
-                updateTemplateDurationValues(container);
-                return;
-            case 'profile_pic':
-                updateTemplateImages(element, value);
-                break;
+        const field = currentModel[key];
+        if (!field) {
+            throw new Error(`Campo no encontrado en el modelo: ${key}`);
         }
 
-        element.textContent = value;
+        switch (field.type) {
+            case 'string':
+            case 'number':
+                element.innerHTML = field.value;
+                break;
+            case 'image':
+                updateTemplateImages(element, field.value);
+                break;
+            case 'duration':
+                updateTemplateDurationValues(container);
+                break;
+            default:
+                throw new Error(`Tipo de campo no soportado: ${field.type}`);
+        }
 
     } catch (error) {
         console.error(`Error al actualizar el valor para ${key}:`, error);
@@ -298,45 +309,43 @@ function formatString(type, string) {
 
 function transformDuration(duration, unit) {
     const units = {
-        'sec': { next: 'min', factor: 60 },
-        'min': { next: 'hour', factor: 60 },
-        'hour': { next: 'day', factor: 24 },
-        'day': { next: 'week', factor: 7 },
-        'week': { next: null, factor: null }
+        'sec': { next: 'min', divisor: 60, threshold: 60 },
+        'min': { next: 'hour', divisor: 60, threshold: 90 },
+        'hour': { next: 'day', divisor: 24, threshold: 24 },
+        'day': { next: 'week', divisor: 7, threshold: 30 },
+        'week': { next: null, divisor: null, threshold: null }
     };
 
+    // handle invalid inputs
     duration = parseInt(duration, 10);
-
-    // Si la duración no es un número válido o la unidad es inválida, devolvemos valores por defecto
     if (isNaN(duration) || !units[unit]) {
-        return { duration: 0, unit: 'sec' };
+        console.log('Invalid number or unit for duration transformation');
+        return { duration: 0, unit: 's' };
     }
 
-    // Si la duración es mayor que el factor de conversión y no estamos en la unidad máxima
-    if (units[unit].factor && duration >= units[unit].factor) {
-        const newDuration = Math.floor(duration / units[unit].factor);
+    // transform if required
+    if (units[unit].divisor && duration > units[unit].threshold) {
+        const newDuration = Math.round(duration / units[unit].divisor);
         const newUnit = units[unit].next;
-
-        // Llamada recursiva para continuar la conversión si es necesario
         return transformDuration(newDuration, newUnit);
     }
 
-    // Si no se necesita conversión, devolvemos los valores actuales
+    // do not need transformation
     return { duration, unit: unit[0] };
 }
 
 // special model updates
 function updateDurationInModel() {
-    // Obtenemos los valores actuales de los inputs
+    // get current values
     const duration = document.getElementById('duration').value;
     const unit = document.getElementById('duration_unit').value;
 
-    // Transformamos la duración
+    // format values
     const transformed = transformDuration(duration, unit);
 
-    // Actualizamos el modelo con los valores transformados
-    currentModel.duration = transformed.duration;
-    currentModel.duration_unit = transformed.unit;
+    // set formatted values
+    currentModel.duration.value = transformed.duration;
+    currentModel.duration_unit.value = transformed.unit;
 }
 
 function updatePicOnModel(imageField) {
@@ -349,29 +358,49 @@ function updatePicOnModel(imageField) {
                 throw new Error('El archivo seleccionado no es una imagen.');
             }
             // Actualizar el modelo con el archivo
-            currentModel[imageField] = file;
-            console.log(`Imagen ${imageField} actualizada en el modelo.`);
+            currentModel[imageField].value = file;
         } else {
             console.warn(`No se seleccionó ninguna imagen para ${imageField}.`);
         }
     } catch (error) {
         console.error(`Error al actualizar la imagen ${imageField}:`, error);
         // Establecer una imagen por defecto en caso de error
-        currentModel[imageField] = null;
+        currentModel[imageField].value = null;
     }
 }
 
 // primary function
 function updateModel(inputElement) {
     try {
-        if (inputElement.id === 'duration' || inputElement.id === 'duration_unit') {
-            updateDurationInModel();
-        } else if (inputElement.id === 'profile_pic') {
-            updatePicOnModel('profile_pic');
-        } else {
-            currentModel[inputElement.id] = inputElement.value; // need to update the modified values, and simplify updateTemplate
+        const field = currentModel[inputElement.id];
+        if (!field) {
+            throw new Error(`Campo no encontrado en el modelo: ${inputElement.id}`);
         }
+
+        switch (field.type) {
+            case 'string':
+                field.value = inputElement.value;
+                if (field.format) {
+                    field.value = formatString(field.format, field.value);
+                }
+                break;
+            case 'number':
+                field.value = parseInt(inputElement.value, 10);
+                if (isNaN(field.value)) {
+                    throw new Error(`Valor inválido para el campo numérico: ${inputElement.id}`);
+                }
+                break;
+            case 'image':
+                updatePicOnModel(inputElement.id);
+                break;
+            case 'duration':
+                updateDurationInModel();
+                break;
+            default:
+                throw new Error(`Tipo de campo no soportado: ${field.type}`);
+        }
+
     } catch (error) {
-        console.error(`Error al actualizar el modelo: ${error.message}`);
+        console.log(`Error updating model: ${error.message}`);
     }
 }
