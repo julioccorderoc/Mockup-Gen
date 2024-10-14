@@ -13,8 +13,8 @@
         <!-- Scripts -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-        <script src="scripts/main.js"></script>
-        <script src="scripts/download-html-as-image.js"></script>
+        <script type="module" src="scripts/main.js"></script>
+        <script src="scripts/dowloadImage.js"></script>
         <!-- <script src="scripts/show-selected-pic.js"></script> -->
     </head>
     <body>
@@ -53,13 +53,13 @@
                         <p class="option-selector-text">Selecciona una opción:</p>
                         <div class="option-buttons">
                             <button class="option-button" data-option="thumbnail">
-                                <img src="static/templates-selectors/generic-miniature.svg" alt="Miniatura">
+                                <img src="static/templates-selectors/generic_miniature.svg" alt="Miniatura">
                             </button>
                             <button class="option-button" data-option="post">
-                                <img src="static/templates-selectors/generic-post.svg" alt="Post">
+                                <img src="static/templates-selectors/generic_post.svg" alt="Post">
                             </button>
                             <button class="option-button" data-option="comment">
-                                <img src="static/templates-selectors/generic-comment.svg" alt="Comentario">
+                                <img src="static/templates-selectors/generic_comment.svg" alt="Comentario">
                             </button>
                         </div>
                     </div>
