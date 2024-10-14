@@ -4,11 +4,11 @@ export let currentModel = {};
 export function createModel() {
     return {
         username: { value: null, type: 'string', format: 'username' },
-        profile_pic: { value: 'static/placeholders/profile_pic.svg', type: 'image' },
+        profile_pic: { value: 'static/placeholders/profile_pic.svg', type: 'image', format: '' },
         content: { value: null, type: 'string', format: 'content' },
-        likes: { value: null, type: 'number' },
-        duration: { value: null, type: 'duration' },
-        duration_unit: { value: null, type: 'duration' }
+        likes: { value: null, type: 'number', format: '' },
+        duration: { value: null, type: 'duration', format: '' },
+        duration_unit: { value: null, type: 'duration', format: '' }
     };
 }
 
