@@ -1,4 +1,4 @@
-import { loadErrorTemplate, selectedSocial, selectedOption } from './eventListeners.js'
+import { selectedSocial, selectedOption } from './eventListeners.js'
 import { currentModel } from './dataModel.js'
 
 // template loader function
@@ -14,7 +14,7 @@ export async function loadTemplate(social, option) {
         document.getElementById('capture-area-front').innerHTML = template;
 
         // Actualizar todos los campos después de cargar la plantilla
-        Object.keys(currentModel).forEach(key => {
+        Object.keys(currentModel.data).forEach(key => {
             //updateModel(key);
             updatePreview(key);
         });
@@ -45,6 +45,22 @@ export function updatePreview(key) {
     }
 }
 
+export async function loadErrorTemplate() {
+    try {
+        const response = await fetch(`../templates/load-error.html`);
+        const template = await response.text();
+        const captureArea = document.getElementById('capture-area-front');
+
+        if (captureArea) {
+            captureArea.innerHTML = template;
+        } else {
+            console.error('El contenedor de la vista previa no existe');
+        }
+    } catch (error) {
+        console.error('Error al cargar la plantilla de error:', error);
+    }
+}
+
 // auxiliar functions
 
 // Función para actualizar los valores de duración en la plantilla
@@ -55,10 +71,10 @@ function updateTemplateDurationValues(container) {
 
     // Actualizamos los elementos si existen
     if (durationElement) {
-        durationElement.textContent = currentModel.duration.value;
+        durationElement.textContent = currentModel.data.duration.value;
     }
     if (unitElement) {
-        unitElement.textContent = currentModel.duration_unit.value;
+        unitElement.textContent = currentModel.data.duration_unit.value;
     }
 }
 
@@ -84,7 +100,7 @@ function updateTemplate(key, container) {
             return;
         }
 
-        const field = currentModel[key];
+        const field = currentModel.data[key];
         if (!field) {
             throw new Error(`Campo no encontrado en el modelo: ${key}`);
         }

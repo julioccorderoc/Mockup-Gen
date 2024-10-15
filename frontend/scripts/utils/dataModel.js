@@ -3,45 +3,43 @@ export let currentModel = {};
 // model to capture data
 export function createModel() {
     return {
-        username: { value: null, type: 'string', format: 'username' },
-        profile_pic: { value: 'static/placeholders/profile_pic.svg', type: 'image', format: '' },
-        content: { value: null, type: 'string', format: 'content' },
-        likes: { value: null, type: 'number', format: '' },
-        duration: { value: null, type: 'duration', format: '' },
-        duration_unit: { value: null, type: 'duration', format: '' }
+        template: {
+            social: null,
+            option: null
+        },
+        data: {
+            username: { value: null, type: 'string', format: 'username' },
+            profile_pic: { value: 'static/placeholders/profile_pic.svg', type: 'image', format: '' },
+            content: { value: null, type: 'string', format: 'content' },
+            likes: { value: null, type: 'number', format: '' },
+            duration: { value: null, type: 'duration', format: '' },
+            duration_unit: { value: null, type: 'duration', format: '' }
+        },
+        config: {
+            dark: false,
+            width: null,
+            height: null
+        }
     };
 }
 
 // primary function
 export function updateModel(inputElement) {
     try {
-        const field = currentModel[inputElement.id];
+
+        // type of field from model
+        const field = currentModel.data[inputElement.id];
         if (!field) {
-            throw new Error(`Campo no encontrado en el modelo: ${inputElement.id}`);
+            throw new Error(`Field not found in model: ${inputElement.id}`);
         }
 
-        switch (field.type) {
-            case 'string':
-                field.value = inputElement.value;
-                if (field.format) {
-                    field.value = formatString(field.format, field.value);
-                }
-                break;
-            case 'number':
-                field.value = parseInt(inputElement.value, 10);
-                if (isNaN(field.value)) {
-                    throw new Error(`Valor inválido para el campo numérico: ${inputElement.id}`);
-                }
-                break;
-            case 'image':
-                updatePicOnModel(inputElement.id);
-                break;
-            case 'duration':
-                updateDurationInModel();
-                break;
-            default:
-                throw new Error(`Tipo de campo no soportado: ${field.type}`);
+        // function for type
+        const updateFunction = updateModelFunctions[field.type];
+        if (!updateFunction) {
+            throw new Error(`Unsupported field type: ${field.type}`);
         }
+
+        updateFunction(field, inputElement.value);
 
     } catch (error) {
         console.log(`Error updating model: ${error.message}`);
@@ -49,6 +47,29 @@ export function updateModel(inputElement) {
 }
 
 // auxiliar functions
+
+// Global object to store update functions for different field types
+const updateModelFunctions = {
+    string: (field, inputValue) => {
+        field.value = inputValue;
+        if (field.format) {
+            field.value = formatString(field.format, field.value);
+        }
+    },
+    number: (field, inputValue) => {
+        const parsedValue = parseInt(inputValue, 10);
+        if (isNaN(parsedValue)) {
+            throw new Error(`Invalid value for numeric field: ${field.id}`);
+        }
+        field.value = parsedValue;
+    },
+    image: (fieldId) => {
+        updatePicOnModel(fieldId);
+    },
+    duration: () => {
+        updateDurationInModel();
+    },
+};
 
 // formatting functions
 function formatString(type, string) {
@@ -101,8 +122,8 @@ function updateDurationInModel() {
     const transformed = transformDuration(duration, unit);
 
     // set formatted values
-    currentModel.duration.value = transformed.duration;
-    currentModel.duration_unit.value = transformed.unit;
+    currentModel.data.duration.value = transformed.duration;
+    currentModel.data.duration_unit.value = transformed.unit;
 }
 
 function updatePicOnModel(imageField) {
@@ -115,13 +136,13 @@ function updatePicOnModel(imageField) {
                 throw new Error('El archivo seleccionado no es una imagen.');
             }
             // Actualizar el modelo con el archivo
-            currentModel[imageField].value = file;
+            currentModel.data[imageField].value = file;
         } else {
             console.warn(`No se seleccionó ninguna imagen para ${imageField}.`);
         }
     } catch (error) {
         console.error(`Error al actualizar la imagen ${imageField}:`, error);
         // Establecer una imagen por defecto en caso de error
-        currentModel[imageField].value = null;
+        currentModel.data[imageField].value = null;
     }
 }
