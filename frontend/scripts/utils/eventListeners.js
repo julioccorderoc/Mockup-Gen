@@ -1,5 +1,5 @@
 import { updateModel } from './dataModel.js'
-import { updatePreview, loadTemplate, loadErrorTemplate } from './updatePreview.js'
+import { updatePreview, loadTemplate } from './updatePreview.js'
 
 export let selectedSocial = null;
 export let selectedOption = null;
@@ -66,23 +66,6 @@ export function initializeOptionButtonEvents() {
     });
 }
 
-export async function loadPlaceholderTemplate() {
-    try {
-        const response = await fetch(`../templates/placeholder.html`);
-        const template = await response.text();
-        const captureArea = document.getElementById('capture-area-front');
-
-        if (captureArea) {
-            captureArea.innerHTML = template;
-        } else {
-            console.error('El contenedor de la vista previa no existe');
-        }
-    } catch (error) {
-        console.error('Error al cargar la plantilla placeholder:', error);
-        loadErrorTemplate();
-    }
-}
-
 export function setPlaceholdersValues() {
     const placeholders = {
         username: 'username',
@@ -100,6 +83,39 @@ export function setPlaceholdersValues() {
         } else {
             console.warn(`Element with id "${field}" not found. Skipping placeholder assignment.`);
         }
+    }
+}
+
+export async function loadPlaceholderTemplate() {
+    try {
+        const response = await fetch(`../templates/placeholder.html`);
+        const template = await response.text();
+        const captureArea = document.getElementById('capture-area-front');
+
+        if (captureArea) {
+            captureArea.innerHTML = template;
+        } else {
+            console.error('El contenedor de la vista previa no existe');
+        }
+    } catch (error) {
+        console.error('Error al cargar la plantilla placeholder:', error);
+        loadErrorTemplate();
+    }
+}
+
+export async function loadErrorTemplate() {
+    try {
+        const response = await fetch(`../templates/load-error.html`);
+        const template = await response.text();
+        const captureArea = document.getElementById('capture-area-front');
+
+        if (captureArea) {
+            captureArea.innerHTML = template;
+        } else {
+            console.error('El contenedor de la vista previa no existe');
+        }
+    } catch (error) {
+        console.error('Error al cargar la plantilla de error:', error);
     }
 }
 

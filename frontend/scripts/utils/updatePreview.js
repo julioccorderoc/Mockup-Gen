@@ -1,4 +1,4 @@
-import { selectedSocial, selectedOption } from './eventListeners.js'
+import { selectedSocial, selectedOption, loadErrorTemplate } from './eventListeners.js'
 import { currentModel } from './dataModel.js'
 
 // template loader function
@@ -42,22 +42,6 @@ export function updatePreview(key) {
 
     } catch (error) {
         console.error('Error al actualizar la vista previa:', error);
-    }
-}
-
-export async function loadErrorTemplate() {
-    try {
-        const response = await fetch(`../templates/load-error.html`);
-        const template = await response.text();
-        const captureArea = document.getElementById('capture-area-front');
-
-        if (captureArea) {
-            captureArea.innerHTML = template;
-        } else {
-            console.error('El contenedor de la vista previa no existe');
-        }
-    } catch (error) {
-        console.error('Error al cargar la plantilla de error:', error);
     }
 }
 
