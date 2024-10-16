@@ -60,13 +60,14 @@ export function initializeOptionButtonEvents() {
 
             // Verificar que ambas selecciones estén hechas
             if (selectedSocial && selectedOption) {
+                setPlaceholdersValues();
                 loadTemplate(selectedSocial, selectedOption);
             }
         });
     });
 }
 
-export function setPlaceholdersValues() {
+function setPlaceholdersValues() {
     const placeholders = {
         username: 'username',
         content: 'Lorem @ipsum odor amet, adipiscing #elit. Vel enim enim velit aliquam orci non posuere. Lectus consequat.',
