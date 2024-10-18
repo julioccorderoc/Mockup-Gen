@@ -1,25 +1,24 @@
-import { updateModel } from './dataModel.js'
-import { updatePreview, loadTemplate } from './updatePreview.js'
+import { dataModel } from './dataModel.js';
+import { updatePreview, loadTemplate } from './updatePreview.js';
 
 export let selectedSocial = null;
 export let selectedOption = null;
 
 // live updates
-export function inititalizeUpdates() {
+export function initializeUpdates() {
     const inputFields = document.querySelector('.input-fields');
 
     inputFields.addEventListener('input', (event) => {
         const target = event.target;
 
         if (target.matches('input, textarea, select, [type="file"]')) {
-            updateModel(target);
+            dataModel.updateModel(target.id, target.value);
             updatePreview(target.id);
 
             if (target.id === 'profile_pic') {
                 const fileLabel = document.querySelector('.file-text');
                 showSelectedPic(target, fileLabel);
             }
-
         }
     });
 }
@@ -67,6 +66,7 @@ export function initializeOptionButtonEvents() {
     });
 }
 
+//TODO set the profile pic and other images here
 function setPlaceholdersValues() {
     const placeholders = {
         username: 'username',
@@ -80,7 +80,7 @@ function setPlaceholdersValues() {
         const element = document.getElementById(field);
         if (element) {
             element.value = placeholders[field];
-            updateModel(element);
+            dataModel.updateModel(field, placeholders[field]);
         } else {
             console.warn(`Element with id "${field}" not found. Skipping placeholder assignment.`);
         }

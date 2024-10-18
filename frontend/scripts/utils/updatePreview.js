@@ -1,5 +1,5 @@
+import { dataModel } from './dataModel.js';
 import { selectedSocial, selectedOption, loadErrorTemplate } from './eventListeners.js'
-import { currentModel } from './dataModel.js'
 
 // template loader function
 export async function loadTemplate(social, option) {
@@ -14,8 +14,7 @@ export async function loadTemplate(social, option) {
         document.getElementById('capture-area-front').innerHTML = template;
 
         // Actualizar todos los campos después de cargar la plantilla
-        Object.keys(currentModel.data).forEach(key => {
-            //updateModel(key);
+        Object.keys(dataModel.currentModel.data).forEach(key => {
             updatePreview(key);
         });
 
@@ -55,10 +54,10 @@ function updateTemplateDurationValues(container) {
 
     // Actualizamos los elementos si existen
     if (durationElement) {
-        durationElement.textContent = currentModel.data.duration.value;
+        durationElement.textContent = dataModel.currentModel.data.duration.value;
     }
     if (unitElement) {
-        unitElement.textContent = currentModel.data.duration_unit.value;
+        unitElement.textContent = dataModel.currentModel.data.duration_unit.value;
     }
 }
 
@@ -84,7 +83,7 @@ function updateTemplate(key, container) {
             return;
         }
 
-        const field = currentModel.data[key];
+        const field = dataModel.currentModel.data[key];
         if (!field) {
             throw new Error(`Campo no encontrado en el modelo: ${key}`);
         }
