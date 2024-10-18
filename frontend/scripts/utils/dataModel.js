@@ -56,10 +56,10 @@ class DataModel {
             }
             field.value = parsedValue;
         },
-        image: (inputId, field, inputValue) => {
+        image: (inputId) => {
             this.updatePicOnModel(inputId);
         },
-        duration: (inputId, field, inputValue) => {
+        duration: () => {
             this.updateDurationInModel();
         },
     };
