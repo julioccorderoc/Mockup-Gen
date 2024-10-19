@@ -1,5 +1,6 @@
 import { dataModel } from './dataModel.js';
 import { updatePreview, loadTemplate } from './updatePreview.js';
+import { sendMockupData } from './mockupServices.js';
 
 export let selectedSocial = null;
 export let selectedOption = null;
@@ -64,6 +65,12 @@ export function initializeOptionButtonEvents() {
             }
         });
     });
+}
+
+// Añadir esta nueva función
+export function initializeDownloadEvent() {
+    const downloadBtn = document.getElementById('download-btn');
+    downloadBtn.addEventListener('click', sendMockupData);
 }
 
 //TODO set the profile pic and other images here
