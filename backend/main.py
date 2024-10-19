@@ -5,13 +5,7 @@ from pydantic import BaseModel
 from pathlib import Path
 from playwright.async_api import async_playwright
 import tempfile
-import html
-#import asyncio
-#import sys
-
-# Configurar el bucle de eventos para Windows
-#if sys.platform == "win32":
-#    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+import htmlx
 
 app = FastAPI()
 
