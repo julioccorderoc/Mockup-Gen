@@ -1,6 +1,10 @@
-import { loadPlaceholderTemplate } from './utils/eventListeners.js'
-import { initializeUpdates, initializeSocialMediaEvents, initializeOptionButtonEvents } from './utils/eventListeners.js'
-//import { createModel, currentModel } from './utils/dataModel.js'
+import {
+    loadPlaceholderTemplate,
+    initializeUpdates,
+    initializeSocialMediaEvents,
+    initializeOptionButtonEvents,
+    initializeDownloadEvent
+} from './utils/eventListeners.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -11,5 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeUpdates();
     initializeSocialMediaEvents();
     initializeOptionButtonEvents();
+    initializeDownloadEvent();
 
 });
