@@ -1,2 +1,6 @@
 # Folder with test files
 /Junk
+
+#enviroment
+/backend/venv
+/backend/__pycache__
