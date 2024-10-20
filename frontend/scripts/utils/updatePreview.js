@@ -1,5 +1,6 @@
 import { dataModel } from './dataModel.js';
-import { selectedSocial, selectedOption, loadErrorTemplate } from './eventListeners.js'
+import { selectedSocial, selectedOption } from './eventListeners.js'
+import { isValidBase64Image } from './utils.js';
 
 // template loader function
 export async function loadTemplate(social, option) {
@@ -27,32 +28,62 @@ export async function loadTemplate(social, option) {
 // update preview of template
 export function updatePreview(key) {
     if (!selectedSocial || !selectedOption) {
-        console.log('Selecciona una opción para actualizar');
+        console.warn('Select a template');
         return;
     }
 
     try {
         const captureArea = document.getElementById('capture-area-front');
         if (!captureArea) {
-            throw new Error('Contenedor de la plantilla no disponible');
+            throw new Error('Template container unavailable');
         }
 
         updateTemplate(key, captureArea);
 
     } catch (error) {
-        console.error('Error al actualizar la vista previa:', error);
+        console.error('Error updating the template preview:', error);
+    }
+}
+
+export async function loadPlaceholderTemplate() {
+    try {
+        const response = await fetch(`../templates/placeholder.html`);
+        const template = await response.text();
+        const captureArea = document.getElementById('capture-area-front');
+
+        if (captureArea) {
+            captureArea.innerHTML = template;
+        } else {
+            console.error('El contenedor de la vista previa no existe');
+        }
+    } catch (error) {
+        console.error('Error al cargar la plantilla placeholder:', error);
+        loadErrorTemplate();
     }
 }
 
 // auxiliar functions
 
-// Función para actualizar los valores de duración en la plantilla
+async function loadErrorTemplate() {
+    try {
+        const response = await fetch(`../templates/load-error.html`);
+        const template = await response.text();
+        const captureArea = document.getElementById('capture-area-front');
+
+        if (captureArea) {
+            captureArea.innerHTML = template;
+        } else {
+            console.error('El contenedor de la vista previa no existe');
+        }
+    } catch (error) {
+        console.error('Error al cargar la plantilla de error:', error);
+    }
+}
+
 function updateTemplateDurationValues(container) {
-    // Buscamos los elementos de duración y unidad en la plantilla
     const durationElement = container.querySelector('[data-field="duration"]');
     const unitElement = container.querySelector('[data-field="duration_unit"]');
 
-    // Actualizamos los elementos si existen
     if (durationElement) {
         durationElement.textContent = dataModel.currentModel.data.duration.value;
     }
@@ -62,16 +93,19 @@ function updateTemplateDurationValues(container) {
 }
 
 // update images on template
-function updateTemplateImages(element, value, placeholder = 'static/placeholders/profile_pic.svg') {
-    if (element.tagName === 'IMG') {
-        if (value instanceof File) {
-            // Crear una URL temporal para la imagen y asignarla al src
-            element.src = URL.createObjectURL(value);
-        } else {
-            // Asignar la imagen existente o el placeholder por defecto
-            element.src = value || placeholder;
-        }
+function updateImageInTemplate(element, value, placeholder = 'static/placeholders/ingeniero.png') {
+    if (element.tagName !== 'IMG') {
+        console.warn('Not an image element: ', element.tagName)
+        return;
     }
+
+    if (!isValidBase64Image(value)) {
+        console.warn('Not a valid Base64 image: ', value, 'Using placeholder.');
+        element.src = placeholder;
+        return;
+    }
+
+    element.src = value;
 }
 
 // update value on template
@@ -94,7 +128,7 @@ function updateTemplate(key, container) {
                 element.innerHTML = field.value;
                 break;
             case 'image':
-                updateTemplateImages(element, field.value);
+                updateImageInTemplate(element, field.value);
                 break;
             case 'duration':
                 updateTemplateDurationValues(container);
@@ -102,7 +136,6 @@ function updateTemplate(key, container) {
             default:
                 throw new Error(`Tipo de campo no soportado: ${field.type}`);
         }
-
     } catch (error) {
         console.error(`Error al actualizar el valor para ${key}:`, error);
     }

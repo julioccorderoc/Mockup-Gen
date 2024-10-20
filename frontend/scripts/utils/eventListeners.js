@@ -1,6 +1,11 @@
+import {
+    updatePreview,
+    loadTemplate,
+    loadPlaceholderTemplate
+} from './updatePreview.js';
 import { dataModel } from './dataModel.js';
-import { updatePreview, loadTemplate } from './updatePreview.js';
 import { sendMockupData } from './mockupServices.js';
+import { imageToBase64 } from './utils.js';
 
 export let selectedSocial = null;
 export let selectedOption = null;
@@ -9,12 +14,15 @@ export let selectedOption = null;
 export function initializeUpdates() {
     const inputFields = document.querySelector('.input-fields');
 
-    inputFields.addEventListener('input', (event) => {
+    inputFields.addEventListener('input', async (event) => {
         const target = event.target;
 
         if (target.matches('input, textarea, select, [type="file"]')) {
-            dataModel.updateModel(target.id, target.value);
-            updatePreview(target.id);
+
+            const updated = await dataModel.updateModel(target.id, target.value);
+            if (updated) {
+                updatePreview(target.id);
+            }
 
             if (target.id === 'profile_pic') {
                 const fileLabel = document.querySelector('.file-text');
@@ -50,7 +58,7 @@ export function initializeOptionButtonEvents() {
     const optionButtons = document.querySelectorAll('.option-button');
 
     optionButtons.forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', async function () {
             selectedOption = this.getAttribute('data-option');
             console.log("Opción seleccionada:", selectedOption);
 
@@ -60,8 +68,12 @@ export function initializeOptionButtonEvents() {
 
             // Verificar que ambas selecciones estén hechas
             if (selectedSocial && selectedOption) {
-                setPlaceholdersValues();
-                loadTemplate(selectedSocial, selectedOption);
+
+                const placeholdersAreUpdated = await setPlaceholdersValues();
+                if (placeholdersAreUpdated) {
+                    loadTemplate(selectedSocial, selectedOption);
+                }
+
             }
         });
     });
@@ -74,56 +86,38 @@ export function initializeDownloadEvent() {
 }
 
 //TODO set the profile pic and other images here
-function setPlaceholdersValues() {
-    const placeholders = {
-        username: 'username',
-        content: 'Lorem @ipsum odor amet, adipiscing #elit. Vel enim enim velit aliquam orci non posuere. Lectus consequat.',
-        likes: '56',
-        duration: '12',
-        duration_unit: 'hour'
-    };
-
-    for (const field in placeholders) {
-        const element = document.getElementById(field);
-        if (element) {
-            element.value = placeholders[field];
-            dataModel.updateModel(field, placeholders[field]);
-        } else {
-            console.warn(`Element with id "${field}" not found. Skipping placeholder assignment.`);
-        }
-    }
-}
-
-export async function loadPlaceholderTemplate() {
+async function setPlaceholdersValues() {
     try {
-        const response = await fetch(`../templates/placeholder.html`);
-        const template = await response.text();
-        const captureArea = document.getElementById('capture-area-front');
+        // Cargar la imagen de placeholder
+        const response = await fetch('static/placeholders/profile_pic.svg');
+        const blob = await response.blob();
+        const base64String = await imageToBase64(blob);
 
-        if (captureArea) {
-            captureArea.innerHTML = template;
-        } else {
-            console.error('El contenedor de la vista previa no existe');
+        dataModel.currentModel.data.profile_pic.value = base64String;
+
+        const placeholders = {
+            username: 'username',
+            content: 'Lorem @ipsum odor amet, adipiscing #elit. Vel enim enim velit aliquam orci non posuere. Lectus consequat.',
+            likes: '56',
+            duration: '12',
+            duration_unit: 'hour'
+        };
+
+        for (const field in placeholders) {
+            const element = document.getElementById(field);
+            if (element) {
+                element.value = placeholders[field];
+                await dataModel.updateModel(field, placeholders[field]);
+            } else {
+                console.warn(`Elemento con id "${field}" no encontrado. Omitiendo asignación de placeholder.`);
+            }
         }
-    } catch (error) {
-        console.error('Error al cargar la plantilla placeholder:', error);
-        loadErrorTemplate();
-    }
-}
 
-export async function loadErrorTemplate() {
-    try {
-        const response = await fetch(`../templates/load-error.html`);
-        const template = await response.text();
-        const captureArea = document.getElementById('capture-area-front');
+        return true;
 
-        if (captureArea) {
-            captureArea.innerHTML = template;
-        } else {
-            console.error('El contenedor de la vista previa no existe');
-        }
     } catch (error) {
-        console.error('Error al cargar la plantilla de error:', error);
+        console.error('Error al cargar los placeholders:', error);
+        return false;
     }
 }
 

@@ -1,4 +1,5 @@
 //TODO set an image for the cases when an error happens uploading the profile pic
+import { imageToBase64, isValidBase64Image } from './utils.js';
 
 class DataModel {
     constructor() {
@@ -8,12 +9,12 @@ class DataModel {
     createModel() {
         return {
             template: {
-                social: null,
-                option: null
+                social: 'instagram//instagram',
+                option: 'comment'
             },
             data: {
                 username: { value: null, type: 'string', format: 'username' },
-                profile_pic: { value: 'static/placeholders/profile_pic.svg', type: 'image', format: '' },
+                profile_pic: { value: null, type: 'image', format: 'base64' },
                 content: { value: null, type: 'string', format: 'content' },
                 likes: { value: null, type: 'number', format: '' },
                 duration: { value: null, type: 'duration', format: '' },
@@ -27,7 +28,7 @@ class DataModel {
         };
     }
 
-    updateModel(inputId, inputValue) {
+    async updateModel(inputId, inputValue) {
         try {
             const field = this.currentModel.data[inputId];
             if (!field) {
@@ -39,9 +40,12 @@ class DataModel {
                 throw new Error(`Unsupported field type: ${field.type}`);
             }
 
-            updateFunction.call(this, inputId, field, inputValue);
+            await updateFunction.call(this, inputId, field, inputValue);
+            return true;
+
         } catch (error) {
             console.error(`Error updating model: ${error.message}`);
+            return false;
         }
     }
 
@@ -56,8 +60,8 @@ class DataModel {
             }
             field.value = parsedValue;
         },
-        image: (inputId) => {
-            this.updatePicOnModel(inputId);
+        image: async (inputId) => {
+            await this.updateImageInModel(inputId);
         },
         duration: () => {
             this.updateDurationInModel();
@@ -76,7 +80,7 @@ class DataModel {
         }
     }
 
-    transformDuration(duration, unit) {
+    formatDuration(duration, unit) {
         const units = {
             'sec': { next: 'min', divisor: 60, threshold: 60 },
             'min': { next: 'hour', divisor: 60, threshold: 90 },
@@ -94,7 +98,7 @@ class DataModel {
         if (units[unit].divisor && duration > units[unit].threshold) {
             const newDuration = Math.round(duration / units[unit].divisor);
             const newUnit = units[unit].next;
-            return this.transformDuration(newDuration, newUnit);
+            return this.formatDuration(newDuration, newUnit);
         }
 
         return { duration, unit: unit[0] };
@@ -104,13 +108,34 @@ class DataModel {
         const duration = document.getElementById('duration').value;
         const unit = document.getElementById('duration_unit').value;
 
-        const transformed = this.transformDuration(duration, unit);
+        const transformed = this.formatDuration(duration, unit);
 
         this.currentModel.data.duration.value = transformed.duration;
         this.currentModel.data.duration_unit.value = transformed.unit;
     }
 
-    updatePicOnModel(imageFieldId) {
+    async updateImageInModel(imageFieldId) {
+        try {
+            const fileInput = document.getElementById(imageFieldId);
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                if (!file.type.startsWith('image/')) {
+                    throw new Error('El archivo seleccionado no es una imagen.');
+                }
+
+                const base64String = await imageToBase64(file);
+                this.currentModel.data[imageFieldId].value = base64String;
+            } else {
+                console.warn(`No se seleccionó ninguna imagen para ${imageFieldId}.`);
+            }
+        } catch (error) {
+            console.error(`Error al actualizar la imagen ${imageFieldId}:`, error);
+            this.currentModel.data[imageFieldId].value = null;
+        }
+    }
+
+    // old function for files only and sending formdata
+    updatePicOnModelFILE(imageFieldId) {
         try {
             const fileInput = document.getElementById(imageFieldId);
             if (fileInput && fileInput.files && fileInput.files[0]) {
