@@ -1,6 +1,9 @@
 import { dataModel } from './dataModel.js';
 import { sendMockupData } from './mockupServices.js';
-import { imageToBase64, showSelectedPicOnFileInput } from './utils.js';
+import {
+    imageToBase64,
+    showSelectedPicOnFileInput
+} from './utils.js';
 import {
     updatePreview,
     loadTemplate,
@@ -13,76 +16,84 @@ export let selectedOption = null;
 // live updates
 export function initializeUpdates() {
     const inputFields = document.querySelector('.input-fields');
-
-    inputFields.addEventListener('input', async (event) => {
-        const target = event.target;
-
-        if (target.matches('input, textarea, select, [type="file"]')) {
-
-            const updated = await dataModel.updateModel(target.id, target.value);
-            if (updated) {
-                updatePreview(target.id);
-            }
-
-            if (target.id === 'profile_pic') {
-                const fileLabel = document.querySelector('.file-text');
-                showSelectedPicOnFileInput(target, fileLabel);
-            }
-        }
-    });
+    inputFields.addEventListener('input', (event) => handleInputFieldUpdate(event));
 }
 
-// handles social media buttons
 export function initializeSocialMediaEvents() {
     const socialButtons = document.querySelectorAll('.social-button');
 
     socialButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const social = this.getAttribute('data-social');
-            resetOptionSelector();
-
-            if (selectedSocial === social) {
-                selectedSocial = null;
-                dataModel.updateTemplateData('reset', null);
-                loadPlaceholderTemplate();
-            } else {
-                selectedSocial = social;
-                dataModel.updateTemplateData('social', social);
-                console.log("Category selected:", selectedSocial);
-                document.getElementById('option-selector').style.display = 'block';
-            }
-        });
+        button.addEventListener('click', () => handleSocialButtonClick(button));
     });
 }
 
-// handles template options button
 export function initializeOptionButtonEvents() {
     const optionButtons = document.querySelectorAll('.option-button');
-
     optionButtons.forEach(button => {
-        button.addEventListener('click', async function () {
-            selectedOption = this.getAttribute('data-option');
-            dataModel.updateTemplateData('option', selectedOption);
-            console.log("Template selected:", selectedOption);
-
-            // Remover la clase seleccionada de otros botones
-            optionButtons.forEach(btn => btn.classList.remove('selected'));
-            this.classList.add('selected');
-
-            if (selectedSocial && selectedOption) {
-                const placeholdersAreUpdated = await setPlaceholdersValues();
-                if (placeholdersAreUpdated) {
-                    loadTemplate(selectedSocial, selectedOption);
-                }
-            }
-        });
+        button.addEventListener('click', () => handleOptionButtonClick(button, optionButtons));
     });
 }
 
-// Añadir esta nueva función
 export function initializeDownloadEvent() {
     const downloadBtn = document.getElementById('download-btn');
     downloadBtn.addEventListener('click', sendMockupData);
+}
+
+//
+// auxiliar functions
+//
+
+async function handleInputFieldUpdate(event) {
+    const target = event.target;
+
+    if (isValidInputField(target)) {
+        const updated = await dataModel.updateModel(target.id, target.value);
+        if (updated) {
+            updatePreview(target.id);
+        }
+
+        if (target.id === 'profile_pic') {
+            const fileLabel = document.querySelector('.file-text');
+            showSelectedPicOnFileInput(target, fileLabel);
+        }
+    }
+}
+
+function isValidInputField(target) {
+    return target.matches('input, textarea, select, [type="file"]');
+}
+
+function handleSocialButtonClick(button) {
+    const social = button.getAttribute('data-social');
+
+    resetOptionSelector();
+
+    if (selectedSocial === social) {
+        selectedSocial = null;
+        dataModel.updateTemplateData('reset', null);
+        loadPlaceholderTemplate();
+    } else {
+        selectedSocial = social;
+        dataModel.updateTemplateData('social', social);
+        document.getElementById('option-selector').style.display = 'block';
+    }
+}
+
+async function handleOptionButtonClick(button, optionButtons) {
+    selectedOption = button.getAttribute('data-option');
+
+    dataModel.updateTemplateData('option', selectedOption);
+
+    // Remove the selected class from other buttons
+    optionButtons.forEach(btn => btn.classList.remove('selected'));
+    button.classList.add('selected');
+
+    if (selectedSocial && selectedOption) {
+        const placeholdersAreUpdated = await setPlaceholdersValues();
+        if (placeholdersAreUpdated) {
+            loadTemplate(selectedSocial, selectedOption);
+        }
+    }
 }
 
 //TODO set the profile pic and other images here
