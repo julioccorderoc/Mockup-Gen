@@ -40,7 +40,7 @@ export function initializeDownloadEvent() {
 }
 
 //
-// auxiliar functions
+// helpers
 //
 
 async function handleInputFieldUpdate(event) {
@@ -91,48 +91,70 @@ async function handleOptionButtonClick(button, optionButtons) {
     if (selectedSocial && selectedOption) {
         const placeholdersAreUpdated = await setPlaceholdersValues();
         if (placeholdersAreUpdated) {
-            loadTemplate(selectedSocial, selectedOption);
+            await loadTemplate(selectedSocial, selectedOption);
         }
     }
 }
 
-//TODO set the profile pic and other images here
 async function setPlaceholdersValues() {
+    let base64String;
+
     try {
-        // Cargar la imagen de placeholder
-        const response = await fetch('static/placeholders/profile_pic.svg');
-        const blob = await response.blob();
-        const base64String = await imageToBase64(blob);
+        base64String = await getProfilePicPlaceholderAsBase64('static/placeholders/profile_pic.svg');
+    } catch (error) {
+        console.warn('Error loading placeholder image:', error);
+        base64String = null;
+    }
 
-        dataModel.currentModel.data.profile_pic.value = base64String;
+    const placeholders = {
+        username: 'username',
+        profile_pic: base64String,
+        content: 'Lorem @ipsum odor amet, adipiscing #elit. Vel enim enim velit aliquam orci non posuere.',
+        likes: '56',
+        duration: '12',
+        duration_unit: 'hour'
+    };
 
-        const placeholders = {
-            username: 'username',
-            content: 'Lorem @ipsum odor amet, adipiscing #elit. Vel enim enim velit aliquam orci non posuere. Lectus consequat.',
-            likes: '56',
-            duration: '12',
-            duration_unit: 'hour'
-        };
-
+    try {
         for (const field in placeholders) {
-            const element = document.getElementById(field);
-            if (element) {
-                element.value = placeholders[field];
+            if (field === 'profile_pic') {
                 await dataModel.updateModel(field, placeholders[field]);
+                displayProfilePicPlaceholder(field, placeholders[field]);
             } else {
-                console.warn(`Elemento con id "${field}" no encontrado. Omitiendo asignación de placeholder.`);
+                await updatePlaceholderField(field, placeholders[field]);
             }
         }
-
         return true;
-
     } catch (error) {
-        console.error('Error al cargar los placeholders:', error);
+        console.error('Error updating placeholders:', error);
         return false;
     }
 }
 
-// auxiliar functions
+async function getProfilePicPlaceholderAsBase64(imageUrl) {
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+    return await imageToBase64(blob);
+}
+
+function displayProfilePicPlaceholder(field, base64String) {
+    const element = document.getElementById(field);
+    if (element) {
+        element.src = base64String
+    } else {
+        console.warn('Profile picture preview element not found');
+    }
+}
+
+async function updatePlaceholderField(field, value) {
+    const element = document.getElementById(field);
+    if (element) {
+        element.value = value;
+        await dataModel.updateModel(field, value);
+    } else {
+        console.warn(`Element with id "${field}" not found. Skipping placeholder assignment.`);
+    }
+}
 
 function resetOptionSelector() {
     selectedOption = null;

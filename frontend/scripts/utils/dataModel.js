@@ -1,5 +1,8 @@
 //TODO set an image for the cases when an error happens uploading the profile pic
-import { imageToBase64 } from './utils.js';
+import {
+    imageToBase64,
+    isValidBase64Image
+} from './utils.js';
 
 class DataModel {
     constructor() {
@@ -75,8 +78,8 @@ class DataModel {
             }
             field.value = parsedValue;
         },
-        image: async (inputId) => {
-            await this.updateImageInModel(inputId);
+        image: async (inputId, field, inputValue) => {
+            await this.updateImageInModel(inputId, inputValue);
         },
         duration: () => {
             this.updateDurationInModel();
@@ -129,7 +132,12 @@ class DataModel {
         this.currentModel.data.duration_unit.value = transformed.unit;
     }
 
-    async updateImageInModel(imageFieldId) {
+    async updateImageInModel(imageFieldId, inputValue) {
+        if (isValidBase64Image(inputValue)) {
+            this.currentModel.data[imageFieldId].value = inputValue;
+            return;
+        }
+
         try {
             const fileInput = document.getElementById(imageFieldId);
             if (fileInput && fileInput.files && fileInput.files[0]) {
