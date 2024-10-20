@@ -1,15 +1,15 @@
 import {
-    loadPlaceholderTemplate,
     initializeUpdates,
     initializeSocialMediaEvents,
     initializeOptionButtonEvents,
     initializeDownloadEvent
 } from './utils/eventListeners.js';
+import { loadPlaceholderTemplate } from './utils/updatePreview.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // init model
-    loadPlaceholderTemplate(); // will remain
+    loadPlaceholderTemplate();
 
     // init events
     initializeUpdates();

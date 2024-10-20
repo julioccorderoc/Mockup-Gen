@@ -1,3 +1,13 @@
+export function showSelectedPicOnFileInput(fileInput, fileLabel) {
+    if (fileInput.files.length > 0) {
+        const fileName = fileInput.files[0].name;
+        fileLabel.textContent = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
+    } else {
+        fileLabel.textContent = 'Seleccionar imagen';
+    }
+}
+
+// transform file to Base64
 export function imageToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
