@@ -1,11 +1,11 @@
+import { dataModel } from './dataModel.js';
+import { sendMockupData } from './mockupServices.js';
+import { imageToBase64, showSelectedPicOnFileInput } from './utils.js';
 import {
     updatePreview,
     loadTemplate,
     loadPlaceholderTemplate
 } from './updatePreview.js';
-import { dataModel } from './dataModel.js';
-import { sendMockupData } from './mockupServices.js';
-import { imageToBase64 } from './utils.js';
 
 export let selectedSocial = null;
 export let selectedOption = null;
@@ -26,7 +26,7 @@ export function initializeUpdates() {
 
             if (target.id === 'profile_pic') {
                 const fileLabel = document.querySelector('.file-text');
-                showSelectedPic(target, fileLabel);
+                showSelectedPicOnFileInput(target, fileLabel);
             }
         }
     });
@@ -43,10 +43,12 @@ export function initializeSocialMediaEvents() {
 
             if (selectedSocial === social) {
                 selectedSocial = null;
+                dataModel.updateTemplateData('reset', null);
                 loadPlaceholderTemplate();
             } else {
                 selectedSocial = social;
-                console.log("Red social seleccionada:", selectedSocial);
+                dataModel.updateTemplateData('social', social);
+                console.log("Category selected:", selectedSocial);
                 document.getElementById('option-selector').style.display = 'block';
             }
         });
@@ -60,20 +62,18 @@ export function initializeOptionButtonEvents() {
     optionButtons.forEach(button => {
         button.addEventListener('click', async function () {
             selectedOption = this.getAttribute('data-option');
-            console.log("Opción seleccionada:", selectedOption);
+            dataModel.updateTemplateData('option', selectedOption);
+            console.log("Template selected:", selectedOption);
 
             // Remover la clase seleccionada de otros botones
             optionButtons.forEach(btn => btn.classList.remove('selected'));
             this.classList.add('selected');
 
-            // Verificar que ambas selecciones estén hechas
             if (selectedSocial && selectedOption) {
-
                 const placeholdersAreUpdated = await setPlaceholdersValues();
                 if (placeholdersAreUpdated) {
                     loadTemplate(selectedSocial, selectedOption);
                 }
-
             }
         });
     });
@@ -123,18 +123,9 @@ async function setPlaceholdersValues() {
 
 // auxiliar functions
 
-// show name of the file on the upload file button
-function showSelectedPic(fileInput, fileLabel) {
-    if (fileInput.files.length > 0) {
-        const fileName = fileInput.files[0].name;
-        fileLabel.textContent = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
-    } else {
-        fileLabel.textContent = 'Seleccionar imagen';
-    }
-}
-
 function resetOptionSelector() {
     selectedOption = null;
+    dataModel.updateTemplateData('option', null);
     document.querySelectorAll('.option-button').forEach(button => {
         button.classList.remove('selected'); // Remueve cualquier selección previa
     });

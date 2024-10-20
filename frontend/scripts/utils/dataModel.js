@@ -1,5 +1,5 @@
 //TODO set an image for the cases when an error happens uploading the profile pic
-import { imageToBase64, isValidBase64Image } from './utils.js';
+import { imageToBase64 } from './utils.js';
 
 class DataModel {
     constructor() {
@@ -9,8 +9,8 @@ class DataModel {
     createModel() {
         return {
             template: {
-                social: 'instagram//instagram',
-                option: 'comment'
+                social: null,
+                option: null
             },
             data: {
                 username: { value: null, type: 'string', format: 'username' },
@@ -26,6 +26,21 @@ class DataModel {
                 height: null
             }
         };
+    }
+
+    updateTemplateData(field, value) {
+        switch (field) {
+            case 'social':
+                this.currentModel.template.social = value;
+                break;
+            case 'option':
+                this.currentModel.template.option = value;
+                break;
+            case 'reset':
+                this.currentModel.template.social = null;
+                this.currentModel.template.option = null;
+                break;
+        }
     }
 
     async updateModel(inputId, inputValue) {
@@ -125,6 +140,7 @@ class DataModel {
 
                 const base64String = await imageToBase64(file);
                 this.currentModel.data[imageFieldId].value = base64String;
+
             } else {
                 console.warn(`No se seleccionó ninguna imagen para ${imageFieldId}.`);
             }
