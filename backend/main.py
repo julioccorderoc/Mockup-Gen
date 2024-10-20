@@ -5,7 +5,6 @@ from pydantic import BaseModel
 from pathlib import Path
 from playwright.async_api import async_playwright
 import tempfile
-import htmlx
 
 app = FastAPI()
 
