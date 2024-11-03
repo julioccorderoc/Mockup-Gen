@@ -1,5 +1,42 @@
 import { dataModel } from './dataModel.js';
 
+/**
+ * Triggers the download of a blob as a file in the browser
+ * @param {Blob} blob - The blob to download
+ * @param {string} filename - The default filename if none is provided in the response
+ * @param {Headers} headers - Response headers to check for Content-Disposition
+ */
+async function downloadFile(blob, filename, headers) {
+    try {
+        // Create a URL for the blob
+        const url = window.URL.createObjectURL(blob);
+
+        // Get filename from Content-Disposition header if available
+        const contentDisposition = headers.get('Content-Disposition');
+        const finalFilename = contentDisposition
+            ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+            : filename;
+
+        // Create and trigger download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = finalFilename;
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Error downloading file:', error);
+        throw new Error(`Failed to download file: ${error.message}`);
+    }
+}
+
+/**
+ * Sends mockup data to the server and handles the download of the generated image
+ * @returns {Promise<boolean>} True if successful, throws error otherwise
+ */
 export async function sendMockupData() {
     try {
         const response = await fetch('http://localhost:8000/generate-mockup', {
@@ -16,26 +53,8 @@ export async function sendMockupData() {
             throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
         }
 
-        // Get the blob and create a URL for it
         const imageBlob = await response.blob();
-        const url = window.URL.createObjectURL(imageBlob);
-
-        // Get the filename from the Content-Disposition header, or use a default
-        const contentDisposition = response.headers.get('Content-Disposition');
-        const filename = contentDisposition
-            ? contentDisposition.split('filename=')[1].replace(/"/g, '')
-            : 'mockup.png';
-
-        // Create a temporary link element and trigger the download
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-
-        // Clean up
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
+        await downloadFile(imageBlob, 'mockup.png', response.headers);
 
         return true;
     } catch (error) {
