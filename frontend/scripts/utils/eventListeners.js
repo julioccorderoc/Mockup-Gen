@@ -29,6 +29,7 @@ export function initializeSocialMediaEvents() {
 
 export function initializeOptionButtonEvents() {
     const optionButtons = document.querySelectorAll('.option-button');
+
     optionButtons.forEach(button => {
         button.addEventListener('click', () => handleOptionButtonClick(button, optionButtons));
     });
