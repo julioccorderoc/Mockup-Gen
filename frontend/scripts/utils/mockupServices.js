@@ -1,49 +1,46 @@
 import { dataModel } from './dataModel.js';
 
-// Función principal para enviar datos y descargar la imagen
 export async function sendMockupData() {
     try {
-        const formData = buildFormData();
-
-        // Enviar los datos al backend
-        const response = await fetch('/generate-mockup', {
+        const response = await fetch('http://localhost:8000/generate-mockup', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataModel.getCurrentModel()),
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            console.error('Server response:', errorText);
+            throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
         }
 
-        // Obtener el blob de la imagen
-        const blob = await response.blob();
+        // Get the blob and create a URL for it
+        const imageBlob = await response.blob();
+        const url = window.URL.createObjectURL(imageBlob);
 
-        // Usar FileSaver.js para descargar la imagen
-        saveAs(blob, 'social-media-mockup.png');
+        // Get the filename from the Content-Disposition header, or use a default
+        const contentDisposition = response.headers.get('Content-Disposition');
+        const filename = contentDisposition
+            ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+            : 'mockup.png';
 
+        // Create a temporary link element and trigger the download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        return true;
     } catch (error) {
-        console.error('Error al enviar los datos del mockup:', error);
-        // Aquí podrías mostrar un mensaje de error al usuario
+        console.error('Error sending mockup data:', error);
+        alert('Error downloading mockup: ' + error.message);
+        throw error;
     }
 }
-
-// Función para construir el FormData
-function buildFormData() {
-    const formData = new FormData();
-    const currentModel = dataModel.getCurrentModel();
-
-    // Agregar la plantilla seleccionada
-    formData.append('template', `${currentModel.template.social}-${currentModel.template.option}`);
-
-    // Agregar los datos del mockup
-    for (const [key, value] of Object.entries(currentModel.data)) {
-        if (key === 'profile_pic' && value.value instanceof File) {
-            formData.append(key, value.value);
-        } else {
-            formData.append(key, value.value);
-        }
-    }
-
-    return formData;
-}
-
