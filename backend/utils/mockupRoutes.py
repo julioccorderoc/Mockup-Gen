@@ -1,11 +1,11 @@
 import logging
+import os
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from fastapi.responses import FileResponse
 from .dataModel import MockupPayload
 from .templateManager import TemplateManager
 from .mockupGenerator import MockupGenerator
 from .cleanUp import cleanup_temp_files
-import os
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
