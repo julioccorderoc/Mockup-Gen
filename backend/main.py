@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from utils.loggingConfig import setup_logging
 from utils.mockupRoutes import router as mockup_router
+from utils.templateRoutes import router as template_router
 
 # Configure logging first
 setup_logging()
@@ -25,6 +26,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(mockup_router)
+app.include_router(template_router)
 
 if __name__ == "__main__":
     import uvicorn

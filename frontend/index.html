@@ -1,153 +1,197 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Social Media Mockups Generator</title>
-        <!-- Styles -->
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="styles/global.css">
-        <link rel="stylesheet" href="styles/responsive.css">
-        <link rel="stylesheet" href="styles/input-fields.css">
-        <link rel="stylesheet" href="styles/toggles.css">
-        <!-- Scripts -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-        <script type="module" src="scripts/main.js"></script>
-        <!-- <script src="scripts/dowloadImage.js"></script> -->
-    </head>
-    <body>
-        <div class="container">
-            <h1>SOCIAL MEDIA MOCKUPS</h1>
-            
-            <div class="content-wrapper">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social Media Mockups Generator</title>
+    <!-- Styles -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles/global.css" />
+    <link rel="stylesheet" href="styles/responsive.css" />
+    <link rel="stylesheet" href="styles/input-fields.css" />
+    <link rel="stylesheet" href="styles/toggles.css" />
+    <!-- Scripts -->
+    <script type="module" src="scripts/main.js"></script>
 
-                <!-- Input Column -->
-                <div class="input-column">
+    <!-- <script src="https://unpkg.com/htmx.org@1.9.10"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script> -->
+    <!-- <script src="scripts/dowloadImage.js"></script> -->
+  </head>
+  <body>
+    <div class="container">
+      <h1>SOCIAL MEDIA MOCKUPS</h1>
 
-                    <!-- Social Selector -->
-                    <div class="social-selector">
-                        <p class="social-selector-text">Selecciona una red social:</p>
-                        <div class="social-buttons">
-                            <button class="social-button" data-social="instagram">
-                                <img src="static\logos\logo-instagram.svg" alt="Instagram">
-                            </button>
-                            <button class="social-button" data-social="facebook">
-                                <img src="static\logos\logo-facebook.svg" alt="Facebook">
-                            </button>
-                            <button class="social-button" data-social="tiktok">
-                                <img src="static\logos\logo-tiktok.svg" alt="Tik Tok">
-                            </button>
-                            <button class="social-button" data-social="twitter">
-                                <img src="static\logos\logo-twitter.svg" alt="X (Twitter)">
-                            </button>
-                            <button class="social-button" data-social="youtube">
-                                <img src="static\logos\logo-youtube.svg" alt="YouTube">
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Mockup Selector -->
-                    <div class="option-selector" id="option-selector" style="display:none;">
-                        <p class="option-selector-text">Selecciona una opción:</p>
-                        <div class="option-buttons">
-                            <button class="option-button" data-option="thumbnail">
-                                <img src="static/templates-selectors/generic_miniature.svg" alt="Miniatura">
-                            </button>
-                            <button class="option-button" data-option="post">
-                                <img src="static/templates-selectors/generic_post.svg" alt="Post">
-                            </button>
-                            <button class="option-button" data-option="comment">
-                                <img src="static/templates-selectors/generic_comment.svg" alt="Comentario">
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Input Fields -->
-                    <div class="input-fields">
-
-                        <!-- User Info -->
-                        <div class="user-info">
-                            <div class="input-wrapper username-wrapper">
-                                <label for="username">Usuario:</label>
-                                <input type="text" id="username" name="username" required autocomplete="username">
-                            </div>
-                            <div class="input-wrapper file-wrapper">
-                                <label for="profile_pic">Profile pic:</label>
-                                <label for="profile_pic" class="file-label">
-                                    <span class="file-text">Seleccionar imagen</span>
-                                    <input type="file" id="profile_pic" name="profile_pic" accept="image/*">
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Content Input -->
-                        <div class="content-input">
-                            <label for="content">Contenido:</label>
-                            <textarea id="content" name="content" rows="3" required></textarea>
-                        </div>
-
-                        <!-- Comment Metadata -->
-                        <div class="comment-metadata">
-                            <div class="comment-likes">
-                                <label for="likes">Likes:</label>
-                                <input type="number" id="likes" name="likes" min="0" value="" required>
-                            </div>
-                            <div class="comment-time">
-                                <label for="duration">Publicado hace:</label>
-                                <div class="time-inputs">
-                                    <input type="number" id="duration" name="duration" min="0" required>
-                                    <select id="duration_unit" name="duration_unit">
-                                        <option value="sec">segundos</option>
-                                        <option value="min">minutos</option>
-                                        <option value="hour">horas</option>
-                                        <option value="day">días</option>
-                                        <option value="week">semanas</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Comment details -->
-                        <div class="comment-details">
-                            <div class="dark-theme-toggle">
-                                <label for="theme-toggle">Dark Theme</label>
-                                <label class="switch">
-                                    <input type="checkbox" id="theme-toggle">
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                            <div class="user-liked-toggle">
-                                <label for="liked-toggle">Liked</label>
-                                <label class="switch">
-                                    <input type="checkbox" id="liked-toggle">
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                            <div class="number-reply-toggle">
-                                <label for="reply-toggle">Replied</label>
-                                <label class="switch">
-                                    <input type="checkbox" id="reply-toggle">
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                        </div>
-
-                    <!-- Finish Input Fields -->
-                    </div>
-                <!-- Finish Input Column -->
-                </div>
-                
-                <!-- Preview Column -->
-                <div class="preview-column">
-                    <button class="action-button" id="download-btn">DESCARGAR</button>
-                    <div class="capture-area-front">
-                        <div id="capture-area-front">
-                            <!-- El contenido del preview se generará dinámicamente con JavaScript -->
-                        </div>
-                    </div>
-                </div>
+      <div class="content-wrapper">
+        <!-- Input Column -->
+        <div class="input-column">
+          <!-- Social Selector -->
+          <div class="social-selector">
+            <p class="social-selector-text">Selecciona una red social:</p>
+            <div class="social-buttons">
+              <button class="social-button" data-social="instagram">
+                <img src="static\logos\logo-instagram.svg" alt="Instagram" />
+              </button>
+              <button class="social-button" data-social="facebook">
+                <img src="static\logos\logo-facebook.svg" alt="Facebook" />
+              </button>
+              <button class="social-button" data-social="tiktok">
+                <img src="static\logos\logo-tiktok.svg" alt="Tik Tok" />
+              </button>
+              <button class="social-button" data-social="twitter">
+                <img src="static\logos\logo-twitter.svg" alt="X (Twitter)" />
+              </button>
+              <button class="social-button" data-social="youtube">
+                <img src="static\logos\logo-youtube.svg" alt="YouTube" />
+              </button>
             </div>
+          </div>
+
+          <!-- Mockup Selector -->
+          <div
+            class="option-selector"
+            id="option-selector"
+            style="display: none"
+          >
+            <p class="option-selector-text">Selecciona una opción:</p>
+            <div class="option-buttons">
+              <button class="option-button" data-option="thumbnail">
+                <img
+                  src="static/templates-selectors/generic_miniature.svg"
+                  alt="Miniatura"
+                />
+              </button>
+              <button class="option-button" data-option="post">
+                <img
+                  src="static/templates-selectors/generic_post.svg"
+                  alt="Post"
+                />
+              </button>
+              <button class="option-button" data-option="comment">
+                <img
+                  src="static/templates-selectors/generic_comment.svg"
+                  alt="Comentario"
+                />
+              </button>
+            </div>
+          </div>
+
+          <!-- Input Fields -->
+          <div class="input-fields">
+            <!-- User Info -->
+            <div class="user-info">
+              <div class="input-wrapper username-wrapper">
+                <label for="username">Usuario:</label>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  required
+                  autocomplete="username"
+                />
+              </div>
+              <div class="input-wrapper file-wrapper">
+                <label for="profile_pic">Profile pic:</label>
+                <label for="profile_pic" class="file-label">
+                  <span class="file-text">Seleccionar imagen</span>
+                  <input
+                    type="file"
+                    id="profile_pic"
+                    name="profile_pic"
+                    accept="image/*"
+                  />
+                </label>
+              </div>
+            </div>
+
+            <!-- Content Input -->
+            <div class="content-input">
+              <label for="content">Contenido:</label>
+              <textarea
+                id="content"
+                name="content"
+                rows="3"
+                required
+              ></textarea>
+            </div>
+
+            <!-- Comment Metadata -->
+            <div class="comment-metadata">
+              <div class="comment-likes">
+                <label for="likes">Likes:</label>
+                <input
+                  type="number"
+                  id="likes"
+                  name="likes"
+                  min="0"
+                  value=""
+                  required
+                />
+              </div>
+              <div class="comment-time">
+                <label for="duration">Publicado hace:</label>
+                <div class="time-inputs">
+                  <input
+                    type="number"
+                    id="duration"
+                    name="duration"
+                    min="0"
+                    required
+                  />
+                  <select id="duration_unit" name="duration_unit">
+                    <option value="sec">segundos</option>
+                    <option value="min">minutos</option>
+                    <option value="hour">horas</option>
+                    <option value="day">días</option>
+                    <option value="week">semanas</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comment details -->
+            <div class="comment-details">
+              <div class="dark-theme-toggle">
+                <label for="theme-toggle">Dark Theme</label>
+                <label class="switch">
+                  <input type="checkbox" id="theme-toggle" />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <div class="user-liked-toggle">
+                <label for="liked-toggle">Liked</label>
+                <label class="switch">
+                  <input type="checkbox" id="liked-toggle" />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <div class="number-reply-toggle">
+                <label for="reply-toggle">Replied</label>
+                <label class="switch">
+                  <input type="checkbox" id="reply-toggle" />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Finish Input Fields -->
+          </div>
+          <!-- Finish Input Column -->
         </div>
-    </body>
+
+        <!-- Preview Column -->
+        <div class="preview-column">
+          <button class="action-button" id="download-btn">DESCARGAR</button>
+          <div class="capture-area-front">
+            <div id="capture-area-front">
+              <!-- El contenido del preview se generará dinámicamente con JavaScript -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

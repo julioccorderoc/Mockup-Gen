@@ -1,26 +1,42 @@
 import { dataModel } from './dataModel.js';
 import { selectedSocial, selectedOption } from './eventListeners.js'
 import { isValidBase64Image } from './utils.js';
+import { API_BASE_URL } from '../config.js';
 
 // template loader function
 export async function loadTemplate(social, option) {
-    const templatePath = `../templates/${social}/${social}-${option}.html`;
     try {
-        const response = await fetch(templatePath);
-        if (!response.ok) {
-            throw new Error('Plantilla no encontrada');
+        // Handle placeholder template locally
+        if (social === 'placeholder') {
+            await loadPlaceholderTemplate();
+            return;
         }
 
-        let template = await response.text();
-        document.getElementById('capture-area-front').innerHTML = template;
+        const templateUrl = `${API_BASE_URL}/api/templates/${social}/${option}`;
+        
+        const response = await fetch(templateUrl);
+        if (!response.ok) {
+            throw new Error(`Failed to load template: ${response.statusText}`);
+        }
 
-        // Actualizar todos los campos después de cargar la plantilla
+        const template = await response.text();
+        
+        // Get the capture area element
+        const captureArea = document.getElementById('capture-area-front');
+        if (!captureArea) {
+            throw new Error('Template container not found');
+        }
+
+        // Update the template content
+        captureArea.innerHTML = template;
+
+        // Update all fields after loading the template
         Object.keys(dataModel.currentModel.data).forEach(key => {
             updatePreview(key);
         });
 
     } catch (error) {
-        console.error('Error al cargar la plantilla:', error);
+        console.error('Error loading template:', error);
         loadErrorTemplate();
     }
 }
@@ -46,6 +62,7 @@ export function updatePreview(key) {
 }
 
 export async function loadPlaceholderTemplate() {
+    console.info('Init loadPlaceholderTemplate')
     try {
         const response = await fetch(`../templates/placeholder.html`);
         const template = await response.text();
