@@ -64,7 +64,7 @@ export function updatePreview(key) {
 export async function loadPlaceholderTemplate() {
     console.info('Init loadPlaceholderTemplate')
     try {
-        const response = await fetch(`../templates/placeholder.html`);
+        const response = await fetch(`../frontend/static/placeholders/placeholder.html`);
         const template = await response.text();
         const captureArea = document.getElementById('capture-area-front');
 
@@ -83,7 +83,7 @@ export async function loadPlaceholderTemplate() {
 
 async function loadErrorTemplate() {
     try {
-        const response = await fetch(`../templates/load-error.html`);
+        const response = await fetch(`../frontend/static/placeholders/load-error.html`);
         const template = await response.text();
         const captureArea = document.getElementById('capture-area-front');
 
