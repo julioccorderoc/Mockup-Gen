@@ -1,4 +1,5 @@
 import { dataModel } from './dataModel.js';
+import { API_BASE_URL } from '../config.js';
 
 /**
  * Triggers the download of a blob as a file in the browser
@@ -39,7 +40,7 @@ async function downloadFile(blob, filename, headers) {
  */
 export async function sendMockupData() {
     try {
-        const response = await fetch('http://localhost:8000/generate-mockup', {
+        const response = await fetch(`${API_BASE_URL}/generate-mockup`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
